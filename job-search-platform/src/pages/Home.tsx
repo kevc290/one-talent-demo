@@ -1,14 +1,32 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Search, Filter, Users } from 'lucide-react';
+import { Breadcrumb } from '../components/Breadcrumb';
+import { useTheme } from '../contexts/ThemeContext';
 
 export function Home() {
+  const { currentBrand } = useTheme();
+  const breadcrumbItems = [
+    { label: 'Home' }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+    <div className={`min-h-screen bg-gradient-to-br to-white ${
+      currentBrand.colors.primary === 'blue' ? 'from-blue-50' : 
+      currentBrand.colors.primary === 'purple' ? 'from-purple-50' : 'from-emerald-50'
+    }`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Breadcrumb */}
+        <Breadcrumb items={breadcrumbItems} />
+      </div>
+      
       {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16">
         <div className="text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Find Your <span className="text-blue-600">Perfect Job</span>
+            Find Your <span className={`${
+              currentBrand.colors.primary === 'blue' ? 'text-blue-600' : 
+              currentBrand.colors.primary === 'purple' ? 'text-purple-600' : 'text-emerald-600'
+            }`}>Perfect Job</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Discover opportunities across software, healthcare, and manufacturing industries. 
@@ -16,7 +34,10 @@ export function Home() {
           </p>
           <Link
             to="/jobs"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
+            className={`inline-flex items-center gap-2 px-8 py-4 text-white font-semibold rounded-lg transition-colors shadow-lg ${
+              currentBrand.colors.primary === 'blue' ? 'bg-blue-600 hover:bg-blue-700' : 
+              currentBrand.colors.primary === 'purple' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-emerald-600 hover:bg-emerald-700'
+            }`}
           >
             Start Your Job Search
             <ArrowRight className="w-5 h-5" />
@@ -27,12 +48,18 @@ export function Home() {
       {/* Features Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-          Why Choose JobSearch Pro?
+          Why Choose {currentBrand.name}?
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="text-center">
-            <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Search className="w-8 h-8 text-blue-600" />
+            <div className={`w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4 ${
+              currentBrand.colors.primary === 'blue' ? 'bg-blue-100' : 
+              currentBrand.colors.primary === 'purple' ? 'bg-purple-100' : 'bg-emerald-100'
+            }`}>
+              <Search className={`w-8 h-8 ${
+                currentBrand.colors.primary === 'blue' ? 'text-blue-600' : 
+                currentBrand.colors.primary === 'purple' ? 'text-purple-600' : 'text-emerald-600'
+              }`} />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Smart Search</h3>
             <p className="text-gray-600">
@@ -41,8 +68,14 @@ export function Home() {
           </div>
           
           <div className="text-center">
-            <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Filter className="w-8 h-8 text-blue-600" />
+            <div className={`w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4 ${
+              currentBrand.colors.primary === 'blue' ? 'bg-blue-100' : 
+              currentBrand.colors.primary === 'purple' ? 'bg-purple-100' : 'bg-emerald-100'
+            }`}>
+              <Filter className={`w-8 h-8 ${
+                currentBrand.colors.primary === 'blue' ? 'text-blue-600' : 
+                currentBrand.colors.primary === 'purple' ? 'text-purple-600' : 'text-emerald-600'
+              }`} />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Advanced Filters</h3>
             <p className="text-gray-600">
@@ -51,8 +84,14 @@ export function Home() {
           </div>
           
           <div className="text-center">
-            <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Users className="w-8 h-8 text-blue-600" />
+            <div className={`w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4 ${
+              currentBrand.colors.primary === 'blue' ? 'bg-blue-100' : 
+              currentBrand.colors.primary === 'purple' ? 'bg-purple-100' : 'bg-emerald-100'
+            }`}>
+              <Users className={`w-8 h-8 ${
+                currentBrand.colors.primary === 'blue' ? 'text-blue-600' : 
+                currentBrand.colors.primary === 'purple' ? 'text-purple-600' : 'text-emerald-600'
+              }`} />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Top Companies</h3>
             <p className="text-gray-600">
@@ -63,20 +102,32 @@ export function Home() {
       </div>
 
       {/* Stats Section */}
-      <div className="bg-blue-600 text-white py-16">
+      <div className={`text-white py-16 ${
+        currentBrand.colors.primary === 'blue' ? 'bg-blue-600' : 
+        currentBrand.colors.primary === 'purple' ? 'bg-purple-600' : 'bg-emerald-600'
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
               <p className="text-4xl font-bold mb-2">20+</p>
-              <p className="text-blue-100">Active Job Listings</p>
+              <p className={`${
+                currentBrand.colors.primary === 'blue' ? 'text-blue-100' : 
+                currentBrand.colors.primary === 'purple' ? 'text-purple-100' : 'text-emerald-100'
+              }`}>Active Job Listings</p>
             </div>
             <div>
               <p className="text-4xl font-bold mb-2">3</p>
-              <p className="text-blue-100">Industry Sectors</p>
+              <p className={`${
+                currentBrand.colors.primary === 'blue' ? 'text-blue-100' : 
+                currentBrand.colors.primary === 'purple' ? 'text-purple-100' : 'text-emerald-100'
+              }`}>Industry Sectors</p>
             </div>
             <div>
               <p className="text-4xl font-bold mb-2">100%</p>
-              <p className="text-blue-100">Free to Use</p>
+              <p className={`${
+                currentBrand.colors.primary === 'blue' ? 'text-blue-100' : 
+                currentBrand.colors.primary === 'purple' ? 'text-purple-100' : 'text-emerald-100'
+              }`}>Free to Use</p>
             </div>
           </div>
         </div>
