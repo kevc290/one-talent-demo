@@ -70,16 +70,23 @@
     const widgets = document.querySelectorAll('[data-jobsearch-widget]');
     
     widgets.forEach(element => {
-      if (element.hasAttribute('data-initialized')) {
-        return;
-      }
-
       const widgetType = element.getAttribute('data-jobsearch-widget');
-      const theme = element.getAttribute('data-theme') || 'modern';
-      const options = { theme };
+      const currentWidgetId = element.getAttribute('data-widget-id');
+      
+      // If widget type changed or no widget exists, recreate it
+      if (!currentWidgetId || element.getAttribute('data-widget-type') !== widgetType) {
+        // Remove existing iframe if present
+        const existingIframe = element.querySelector('iframe');
+        if (existingIframe) {
+          existingIframe.remove();
+        }
+        
+        const theme = element.getAttribute('data-theme') || 'modern';
+        const options = { theme };
 
-      createWidget(element, widgetType, options);
-      element.setAttribute('data-initialized', 'true');
+        createWidget(element, widgetType, options);
+        element.setAttribute('data-widget-type', widgetType);
+      }
     });
   }
 
