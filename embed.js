@@ -192,12 +192,12 @@
   // Create job listing HTML
   function createJobHTML(job) {
     return `
-      <div style="background: #f9fafb; border-radius: 8px; padding: 16px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='#f9fafb'" onclick="window.open('${WIDGET_BASE_URL}/job/${job.id}', '_blank')">
+      <div style="background: #f9fafb; border-radius: 8px; padding: 16px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='#f9fafb'" onclick="window.location.href='${WIDGET_BASE_URL}/job/${job.id}'">
         <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">${job.title}</div>
         <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">${job.company} • ${job.location}${job.remote ? ' • Remote' : ''}</div>
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <span style="font-weight: 600; color: #059669;">$${Math.floor(job.salary.min/1000)}k - $${Math.floor(job.salary.max/1000)}k</span>
-          <button style="background: #3b82f6; color: white; padding: 6px 12px; border: none; border-radius: 6px; font-size: 12px; cursor: pointer;" onclick="event.stopPropagation(); window.open('${WIDGET_BASE_URL}/job/${job.id}', '_blank')">Apply</button>
+          <button style="background: #3b82f6; color: white; padding: 6px 12px; border: none; border-radius: 6px; font-size: 12px; cursor: pointer;" onclick="event.stopPropagation(); window.location.href='${WIDGET_BASE_URL}/job/${job.id}'">Apply</button>
         </div>
       </div>
     `;
@@ -237,7 +237,7 @@
         resultsContainer.innerHTML = `
           <h4 style="font-size: 16px; font-weight: 600; color: #1f2937; margin-bottom: 12px;">Search Results (${filteredJobs.length})</h4>
           ${jobsHTML}
-          <button type="button" onclick="window.open('${WIDGET_BASE_URL}/jobs', '_blank')"
+          <button type="button" onclick="window.location.href='${WIDGET_BASE_URL}/jobs'"
             style="width: 100%; margin-top: 16px; background: transparent; color: #3b82f6; padding: 8px 16px; border: 1px solid #3b82f6; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
             onmouseover="this.style.backgroundColor='#3b82f6'; this.style.color='white'"
             onmouseout="this.style.backgroundColor='transparent'; this.style.color='#3b82f6'">
@@ -272,7 +272,7 @@
     setTimeout(() => {
       if (email && password) {
         // Successful login - redirect to main app
-        window.open(`${WIDGET_BASE_URL}/dashboard`, '_blank');
+        window.location.href = `${WIDGET_BASE_URL}/dashboard`;
       } else {
         alert('Invalid credentials. Please try again.');
         submitButton.innerHTML = originalText;
@@ -341,14 +341,14 @@
           </h3>
           <div style="space-y: 12px;">
             ${mockJobs.slice(0, 3).map(job => `
-              <div style="padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; transition: all 0.2s; cursor: pointer;" onmouseover="this.style.borderColor='#3b82f6'; this.style.backgroundColor='#f8fafc'" onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='transparent'" onclick="window.open('${WIDGET_BASE_URL}/job/${job.id}', '_blank')">
+              <div style="padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; transition: all 0.2s; cursor: pointer;" onmouseover="this.style.borderColor='#3b82f6'; this.style.backgroundColor='#f8fafc'" onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='transparent'" onclick="window.location.href='${WIDGET_BASE_URL}/job/${job.id}'">
                 <div style="font-weight: 600; color: #1f2937; font-size: 14px; margin-bottom: 4px;">${job.title}</div>
                 <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">${job.company}</div>
                 <div style="font-size: 12px; color: #059669; font-weight: 600;">$${Math.floor(job.salary.min/1000)}k - $${Math.floor(job.salary.max/1000)}k</div>
               </div>
             `).join('')}
           </div>
-          <button type="button" onclick="window.open('${WIDGET_BASE_URL}/jobs', '_blank')"
+          <button type="button" onclick="window.location.href='${WIDGET_BASE_URL}/jobs'"
             style="width: 100%; margin-top: 16px; background: transparent; color: #3b82f6; padding: 8px 16px; border: 1px solid #3b82f6; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
             onmouseover="this.style.backgroundColor='#3b82f6'; this.style.color='white'"
             onmouseout="this.style.backgroundColor='transparent'; this.style.color='#3b82f6'">
@@ -388,7 +388,7 @@
             </button>
             
             <div style="text-align: center;">
-              <a href="#" onclick="event.preventDefault(); window.open('${WIDGET_BASE_URL}/register', '_blank')" 
+              <a href="#" onclick="event.preventDefault(); window.location.href='${WIDGET_BASE_URL}/register'" 
                  style="color: #3b82f6; text-decoration: none; font-size: 14px;"
                  onmouseover="this.style.textDecoration='underline'"
                  onmouseout="this.style.textDecoration='none'">
