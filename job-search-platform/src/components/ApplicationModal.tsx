@@ -10,9 +10,10 @@ interface ApplicationModalProps {
   job: Job;
   isOpen: boolean;
   onClose: () => void;
+  onApplicationSubmitted?: () => void;
 }
 
-export function ApplicationModal({ job, isOpen, onClose }: ApplicationModalProps) {
+export function ApplicationModal({ job, isOpen, onClose, onApplicationSubmitted }: ApplicationModalProps) {
   const { currentBrand } = useTheme();
   const [formData, setFormData] = useState({
     fullName: '',
@@ -107,11 +108,17 @@ export function ApplicationModal({ job, isOpen, onClose }: ApplicationModalProps
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       const file = files[0];
-      // Simulate file input change event
-      const mockEvent = {
-        target: { files: [file] }
-      } as React.ChangeEvent<HTMLInputElement>;
-      await handleFileChange(mockEvent);
+      // Create a mock input element with the file
+      const input = document.createElement('input');
+      input.type = 'file';
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      input.files = dt.files;
+      
+      // Create a proper change event
+      const mockEvent = new Event('change', { bubbles: true }) as any;
+      mockEvent.target = input;
+      await handleFileChange(mockEvent as React.ChangeEvent<HTMLInputElement>);
     }
   };
 
@@ -180,6 +187,7 @@ export function ApplicationModal({ job, isOpen, onClose }: ApplicationModalProps
             lastName,
             email: formData.email,
             password: formData.password,
+            confirmPassword: formData.password,
           });
           
           setAccountCreated(true);
@@ -215,6 +223,11 @@ export function ApplicationModal({ job, isOpen, onClose }: ApplicationModalProps
       
       setIsSubmitting(false);
       setIsSubmitted(true);
+      
+      // Call the callback if provided
+      if (onApplicationSubmitted) {
+        onApplicationSubmitted();
+      }
       
       // Reset form after 4 seconds and close modal
       setTimeout(() => {

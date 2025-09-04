@@ -12,6 +12,9 @@ import { Dashboard } from './pages/Dashboard';
 import { HubSpotDemo } from './pages/HubSpotDemo';
 import { SavedJobs } from './pages/SavedJobs';
 import { Admin } from './pages/Admin';
+import { SearchWidget } from './pages/widgets/SearchWidget';
+import { ListingsWidget } from './pages/widgets/ListingsWidget';
+import { LoginWidget } from './pages/widgets/LoginWidget';
 import { ToastProvider } from './components/Toast';
 
 function App() {
@@ -19,7 +22,7 @@ function App() {
     <ThemeProvider>
       <ToastProvider>
         <AuthProvider>
-          <Router>
+          <Router basename={import.meta.env.PROD ? '/one-talent-demo' : ''}>
         <div className="min-h-screen bg-gray-50">
           <Navigation />
           <Routes>
@@ -30,6 +33,11 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/hubspot-demo" element={<HubSpotDemo />} />
+            
+            {/* Widget Routes (for iframe embedding) */}
+            <Route path="/widget/search" element={<SearchWidget />} />
+            <Route path="/widget/listings" element={<ListingsWidget />} />
+            <Route path="/widget/login" element={<LoginWidget />} />
             
             {/* Protected Routes */}
             <Route path="/dashboard" element={

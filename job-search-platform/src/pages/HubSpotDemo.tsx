@@ -1,14 +1,45 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Play, Users, Building2, Briefcase, Star, ChevronRight, User, ChevronDown } from 'lucide-react';
-import { JobSearchWidget } from '../components/embeds/JobSearchWidget';
-import { MiniJobListings } from '../components/embeds/MiniJobListings';
-import { LoginWidget } from '../components/embeds/LoginWidget';
 import { useAuth } from '../contexts/AuthContext';
 
 export function HubSpotDemo() {
   const { user, isAuthenticated } = useAuth();
   const [activeDemo, setActiveDemo] = useState<'search' | 'listings' | 'login'>('search');
+
+  // Load the embed script and initialize widgets
+  useEffect(() => {
+    // Create and load the embed script
+    const script = document.createElement('script');
+    script.src = import.meta.env.PROD ? '/one-talent-demo/embed.js' : '/embed.js';
+    script.async = true;
+    script.id = 'jobsearch-embed-script';
+    
+    // Only add if not already present
+    if (!document.getElementById('jobsearch-embed-script')) {
+      document.head.appendChild(script);
+    }
+
+    return () => {
+      // Clean up script on unmount
+      const existingScript = document.getElementById('jobsearch-embed-script');
+      if (existingScript) {
+        document.head.removeChild(existingScript);
+      }
+    };
+  }, []);
+
+  // Re-initialize widgets when activeDemo changes
+  useEffect(() => {
+    // Give the script time to load and then initialize
+    const timer = setTimeout(() => {
+      if (window.JobSearchWidgets) {
+        window.JobSearchWidgets.init();
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [activeDemo]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -120,7 +151,8 @@ export function HubSpotDemo() {
               <div className="bg-white rounded-2xl shadow-2xl p-1 transform rotate-2">
                 <div className="bg-gray-50 rounded-xl p-6 transform -rotate-2">
                   <div className="bg-white rounded-lg shadow-lg">
-                    <JobSearchWidget />
+                    {/* Real embedded widget using script */}
+                    <div data-jobsearch-widget="search" data-theme="modern"></div>
                   </div>
                 </div>
               </div>
@@ -149,9 +181,9 @@ export function HubSpotDemo() {
                 <video
                   controls
                   className="w-full h-full object-cover"
-                  poster="/videos/Job_Search.mp4?t=0.1"
+                  poster={import.meta.env.PROD ? "/one-talent-demo/videos/Job_Search.mp4?t=0.1" : "/videos/Job_Search.mp4?t=0.1"}
                 >
-                  <source src="/videos/Job_Search.mp4" type="video/mp4" />
+                  <source src={import.meta.env.PROD ? "/one-talent-demo/videos/Job_Search.mp4" : "/videos/Job_Search.mp4"} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
                 
@@ -258,9 +290,12 @@ export function HubSpotDemo() {
           {/* Widget Display */}
           <div className="max-w-4xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-8 transition-all duration-500">
-              {activeDemo === 'search' && <JobSearchWidget />}
-              {activeDemo === 'listings' && <MiniJobListings />}
-              {activeDemo === 'login' && <LoginWidget />}
+              {/* Real embedded widgets using script */}
+              <div 
+                data-jobsearch-widget={activeDemo} 
+                data-theme="modern"
+                style={{ display: 'block' }}
+              ></div>
             </div>
           </div>
 
@@ -269,12 +304,36 @@ export function HubSpotDemo() {
             <div className="bg-gray-900 rounded-xl p-6 text-sm">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-gray-400 font-medium">Embed Code</span>
-                <button className="text-blue-400 hover:text-blue-300 text-sm">Copy to clipboard</button>
+                <button 
+                  onClick={() => {
+                    const code = `<script src="${window.location.origin}${import.meta.env.PROD ? '/one-talent-demo' : ''}/embed.js"></script>\n<div data-jobsearch-widget="${activeDemo}" data-theme="modern"></div>`;
+                    navigator.clipboard.writeText(code);
+                  }}
+                  className="text-blue-400 hover:text-blue-300 text-sm"
+                >
+                  Copy to clipboard
+                </button>
               </div>
               <pre className="text-green-400 overflow-x-auto">
-                <code>{`<script src="https://widgets.jobsearch.com/embed.js"></script>
+                <code>{`<script src="${window.location.origin}${import.meta.env.PROD ? '/one-talent-demo' : ''}/embed.js"></script>
 <div data-jobsearch-widget="${activeDemo}" data-theme="modern"></div>`}</code>
               </pre>
+            </div>
+            
+            {/* Link to live embed demo */}
+            <div className="text-center mt-4">
+              <a
+                href={`${window.location.origin}${import.meta.env.PROD ? '/one-talent-demo' : ''}/embed-demo.html`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-medium"
+              >
+                <span>🚀 View Live Third-Party Embed Demo</span>
+                <ArrowRight className="w-4 h-4" />
+              </a>
+              <p className="text-sm text-gray-500 mt-1">
+                See these widgets working on an actual third-party website
+              </p>
             </div>
           </div>
         </div>

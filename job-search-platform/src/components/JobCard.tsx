@@ -17,9 +17,13 @@ export function JobCard({ job, view }: JobCardProps) {
   const [showQuickActions, setShowQuickActions] = useState(false);
 
   useEffect(() => {
-    // Check if job is saved when component mounts
-    setIsSaved(jobsService.isJobSaved(job.id));
-  }, [job.id]);
+    // Check if job is saved when component mounts (only for authenticated users)
+    if (isAuthenticated) {
+      setIsSaved(jobsService.isJobSaved(job.id));
+    } else {
+      setIsSaved(false);
+    }
+  }, [job.id, isAuthenticated]);
 
   const formatSalary = (min: number, max: number) => {
     return `$${(min / 1000).toFixed(0)}k - $${(max / 1000).toFixed(0)}k`;

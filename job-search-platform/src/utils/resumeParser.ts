@@ -232,7 +232,7 @@ function extractSections(text: string): { experience: string[], education: strin
 async function parsePDF(file: File): Promise<string> {
   try {
     const arrayBuffer = await file.arrayBuffer();
-    const data = await pdfParse(arrayBuffer);
+    const data = await pdfParse(Buffer.from(arrayBuffer));
     return data.text;
   } catch (error) {
     throw new Error('Failed to parse PDF file');

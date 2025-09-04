@@ -208,7 +208,7 @@ export function JobSearch() {
           </div>
         ) : error ? (
           <ErrorState
-            type="error"
+            type="generic"
             title="Failed to load jobs"
             message={error}
             onRetry={loadJobs}

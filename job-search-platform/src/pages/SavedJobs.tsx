@@ -65,7 +65,7 @@ export function SavedJobs() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Breadcrumb items={breadcrumbItems} />
           <ErrorState
-            type="error"
+            type="generic"
             title="Failed to load saved jobs"
             message={error}
             onRetry={loadSavedJobs}

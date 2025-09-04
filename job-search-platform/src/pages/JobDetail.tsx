@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, DollarSign, Building2, Calendar, Briefcase, Users, Globe, Heart, ExternalLink } from 'lucide-react';
+import { ArrowLeft, MapPin, DollarSign, Building2, Calendar, Briefcase, Users, Globe, Heart, ExternalLink, Check } from 'lucide-react';
 import { ApplicationModal } from '../components/ApplicationModal';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { CompanyLogo } from '../components/CompanyLogo';
 import { jobsService } from '../services/jobsService';
+import { applicationsService } from '../services/applicationsService';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import type { Job } from '../data/jobs';
@@ -19,6 +20,7 @@ export function JobDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [job, setJob] = useState<Job | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [hasApplied, setHasApplied] = useState(false);
 
   const loadJob = async () => {
     if (!id) return;
@@ -30,8 +32,29 @@ export function JobDetail() {
       const jobData = await jobsService.getJobById(id);
       setJob(jobData);
       
-      // Check if job is saved
-      setIsSaved(jobsService.isJobSaved(id));
+      // Check if job is saved (only for authenticated users)
+      if (isAuthenticated) {
+        setIsSaved(jobsService.isJobSaved(id));
+      } else {
+        setIsSaved(false);
+      }
+      
+      // Check if user has already applied
+      if (isAuthenticated) {
+        try {
+          const applications = await applicationsService.getUserApplications();
+          const hasAppliedToJob = applications.some(app => app.jobId === id);
+          setHasApplied(hasAppliedToJob);
+        } catch (err) {
+          console.error('Failed to check application status:', err);
+          // Fallback to checking local storage
+          if (user?.id) {
+            const localApplications = applicationsService.getUserApplicationsLocally(user.id);
+            const hasAppliedToJob = localApplications.some(app => app.jobId === id);
+            setHasApplied(hasAppliedToJob);
+          }
+        }
+      }
     } catch (err) {
       console.error('Failed to load job:', err);
       setError(err instanceof Error ? err.message : 'Failed to load job');
@@ -42,7 +65,7 @@ export function JobDetail() {
 
   useEffect(() => {
     loadJob();
-  }, [id]);
+  }, [id, isAuthenticated]);
 
   const handleSaveJob = async () => {
     if (!job) return;
@@ -226,13 +249,25 @@ export function JobDetail() {
                   {isSaved ? 'Saved' : 'Save Job'}
                 </button>
                 <button
-                  onClick={() => setIsApplicationModalOpen(true)}
-                  className={`bg-white px-6 py-2 rounded-lg font-semibold transition-colors ${
-                    currentBrand.colors.primary === 'blue' ? 'text-blue-600 hover:bg-blue-50' : 
-                    currentBrand.colors.primary === 'purple' ? 'text-purple-600 hover:bg-purple-50' : 'text-emerald-600 hover:bg-emerald-50'
+                  onClick={() => hasApplied ? null : setIsApplicationModalOpen(true)}
+                  disabled={hasApplied}
+                  className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
+                    hasApplied 
+                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed flex items-center gap-2'
+                      : `bg-white ${
+                          currentBrand.colors.primary === 'blue' ? 'text-blue-600 hover:bg-blue-50' : 
+                          currentBrand.colors.primary === 'purple' ? 'text-purple-600 hover:bg-purple-50' : 'text-emerald-600 hover:bg-emerald-50'
+                        }`
                   }`}
                 >
-                  Apply Now
+                  {hasApplied ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      Applied
+                    </>
+                  ) : (
+                    'Apply Now'
+                  )}
                 </button>
               </div>
             </div>
@@ -361,13 +396,25 @@ export function JobDetail() {
                 {/* Action Buttons */}
                 <div className="space-y-3">
                   <button
-                    onClick={() => setIsApplicationModalOpen(true)}
-                    className={`w-full px-6 py-3 text-white font-semibold rounded-lg transition-colors ${
-                      currentBrand.colors.primary === 'blue' ? 'bg-blue-600 hover:bg-blue-700' : 
-                      currentBrand.colors.primary === 'purple' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-emerald-600 hover:bg-emerald-700'
+                    onClick={() => hasApplied ? null : setIsApplicationModalOpen(true)}
+                    disabled={hasApplied}
+                    className={`w-full px-6 py-3 font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                      hasApplied 
+                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                        : `text-white ${
+                            currentBrand.colors.primary === 'blue' ? 'bg-blue-600 hover:bg-blue-700' : 
+                            currentBrand.colors.primary === 'purple' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-emerald-600 hover:bg-emerald-700'
+                          }`
                     }`}
                   >
-                    Apply for This Position
+                    {hasApplied ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        Applied
+                      </>
+                    ) : (
+                      'Apply for This Position'
+                    )}
                   </button>
                   <button
                     onClick={handleSaveJob}
@@ -391,6 +438,11 @@ export function JobDetail() {
         job={job}
         isOpen={isApplicationModalOpen}
         onClose={() => setIsApplicationModalOpen(false)}
+        onApplicationSubmitted={() => {
+          setHasApplied(true);
+          // Optionally refresh the job data
+          loadJob();
+        }}
       />
     </div>
   );

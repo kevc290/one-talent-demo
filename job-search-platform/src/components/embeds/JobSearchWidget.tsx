@@ -97,8 +97,8 @@ export function JobSearchWidget() {
 
   const handleApply = (job: Job) => {
     // Redirect to main app with job application
-    const targetUrl = `/job/${job.id}`;
-    window.open(targetUrl, '_blank');
+    const targetUrl = import.meta.env.PROD ? `/one-talent-demo/job/${job.id}` : `/job/${job.id}`;
+    window.location.href = targetUrl;
   };
 
 
@@ -278,7 +278,7 @@ export function JobSearchWidget() {
                   </div>
                   <div className="ml-4 flex space-x-2">
                     <button
-                      onClick={() => window.open(`/job/${job.id}`, '_blank')}
+                      onClick={() => window.location.href = import.meta.env.PROD ? `/one-talent-demo/job/${job.id}` : `/job/${job.id}`}
                       className="text-blue-600 hover:text-blue-700 text-sm font-medium"
                     >
                       View
@@ -306,7 +306,7 @@ export function JobSearchWidget() {
 
           {jobs.length > 0 && (
             <button
-              onClick={() => navigate('/jobs')}
+              onClick={() => window.location.href = import.meta.env.PROD ? '/one-talent-demo/jobs' : '/jobs'}
               className="block w-full text-center text-blue-600 hover:text-blue-700 text-sm font-medium py-2 transition-colors"
             >
               View all jobs →

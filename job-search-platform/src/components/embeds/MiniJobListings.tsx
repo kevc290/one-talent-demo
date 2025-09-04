@@ -1,65 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MapPin, Clock, ExternalLink, Bookmark, BookmarkCheck } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { jobs } from '../../data/jobs';
+import type { Job } from '../../data/jobs';
 
 export function MiniJobListings() {
   const { currentBrand } = useTheme();
-  const [savedJobs, setSavedJobs] = useState<number[]>([]);
+  const [savedJobs, setSavedJobs] = useState<string[]>([]);
 
-  const jobs = [
-    {
-      id: 1,
-      title: 'Frontend Developer',
-      company: 'InnovateCorp',
-      location: 'Remote',
-      type: 'Full-time',
-      salary: '$90k - $120k',
-      posted: '2 days ago',
-      logo: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=40&h=40&fit=crop&crop=face&auto=format'
-    },
-    {
-      id: 2,
-      title: 'Data Analyst',
-      company: 'DataFlow Inc',
-      location: 'New York, NY',
-      type: 'Full-time',
-      salary: '$75k - $95k',
-      posted: '1 week ago',
-      logo: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=40&h=40&fit=crop&crop=center&auto=format'
-    },
-    {
-      id: 3,
-      title: 'Marketing Manager',
-      company: 'GrowthLab',
-      location: 'San Francisco, CA',
-      type: 'Contract',
-      salary: '$85k - $110k',
-      posted: '3 days ago',
-      logo: 'https://images.unsplash.com/photo-1553484771-371a605b060b?w=40&h=40&fit=crop&crop=center&auto=format'
-    },
-    {
-      id: 4,
-      title: 'DevOps Engineer',
-      company: 'CloudTech',
-      location: 'Austin, TX',
-      type: 'Full-time',
-      salary: '$100k - $130k',
-      posted: '5 days ago',
-      logo: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=40&h=40&fit=crop&crop=center&auto=format'
-    },
-    {
-      id: 5,
-      title: 'UX Designer',
-      company: 'DesignStudio',
-      location: 'Remote',
-      type: 'Part-time',
-      salary: '$60k - $80k',
-      posted: '1 day ago',
-      logo: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=40&h=40&fit=crop&crop=center&auto=format'
-    }
-  ];
+  // Use first 5 jobs from the main jobs data
+  const displayJobs = jobs.slice(0, 5);
 
-  const toggleSaveJob = (jobId: number) => {
+  const toggleSaveJob = (jobId: string) => {
     setSavedJobs(prev => 
       prev.includes(jobId)
         ? prev.filter(id => id !== jobId)
@@ -92,22 +44,22 @@ export function MiniJobListings() {
         {/* Header */}
         <div className="flex items-center justify-between border-b pb-3">
           <h4 className="font-bold text-gray-900">Latest Jobs</h4>
-          <span className="text-sm text-gray-500">{jobs.length} new</span>
+          <span className="text-sm text-gray-500">{displayJobs.length} new</span>
         </div>
 
         {/* Job List */}
         <div className="space-y-3 max-h-96 overflow-y-auto">
-          {jobs.map(job => (
+          {displayJobs.map(job => (
             <div
               key={job.id}
-              onClick={() => window.open(`/job/${job.id}`, '_blank')}
+              onClick={() => window.location.href = import.meta.env.PROD ? `/one-talent-demo/job/${job.id}` : `/job/${job.id}`}
               className="group p-3 rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 cursor-pointer"
             >
               {/* Job Header */}
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center space-x-3 flex-1">
                   <img
-                    src={job.logo}
+                    src={job.companyLogo}
                     alt={`${job.company} logo`}
                     className="w-8 h-8 rounded-full object-cover"
                   />
@@ -143,13 +95,13 @@ export function MiniJobListings() {
                   </div>
                   <div className="flex items-center space-x-1">
                     <Clock className="w-3 h-3" />
-                    <span>{job.posted}</span>
+                    <span>{new Date(job.postedDate).toLocaleDateString()}</span>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
-                    <div className="text-sm font-medium text-green-600">{job.salary}</div>
+                    <div className="text-sm font-medium text-green-600">${job.salary.min.toLocaleString()} - ${job.salary.max.toLocaleString()}</div>
                     <div className="text-xs text-gray-500">{job.type}</div>
                   </div>
                   
@@ -165,7 +117,7 @@ export function MiniJobListings() {
         {/* Footer */}
         <div className="pt-3 border-t">
           <button 
-            onClick={() => window.open('/jobs', '_blank')}
+            onClick={() => window.location.href = import.meta.env.PROD ? '/one-talent-demo/jobs' : '/jobs'}
             className={`w-full text-sm font-medium py-2 px-4 rounded-lg transition-colors ${
               currentBrand.colors.primary === 'blue' ? 'text-blue-600 hover:text-blue-700 hover:bg-blue-50' : 
               currentBrand.colors.primary === 'purple' ? 'text-purple-600 hover:text-purple-700 hover:bg-purple-50' : 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50'
