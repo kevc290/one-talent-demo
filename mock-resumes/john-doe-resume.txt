@@ -1,0 +1,81 @@
+JOHN DOE
+Senior Full Stack Developer
+
+Contact Information:
+Email: john.doe@email.com
+Phone: (555) 123-4567
+Location: San Francisco, CA
+LinkedIn: linkedin.com/in/johndoe
+GitHub: github.com/johndoe
+
+PROFESSIONAL SUMMARY
+Experienced full stack developer with 8+ years of expertise in building scalable web applications using modern technologies. Proficient in React, Node.js, TypeScript, and cloud platforms. Strong background in agile methodologies and team leadership. Passionate about creating exceptional user experiences and writing clean, maintainable code.
+
+TECHNICAL SKILLS
+• Frontend: React, TypeScript, JavaScript, HTML5, CSS3, Tailwind CSS, Next.js
+• Backend: Node.js, Express.js, Python, FastAPI, RESTful APIs, GraphQL
+• Databases: PostgreSQL, MongoDB, Redis, MySQL
+• Cloud & DevOps: AWS, Google Cloud, Docker, Kubernetes, CI/CD pipelines
+• Tools: Git, Webpack, Jest, Cypress, Figma, Jira
+
+PROFESSIONAL EXPERIENCE
+
+Senior Full Stack Developer | TechCorp Solutions | 2021 - Present
+• Led development of customer-facing web applications serving 100,000+ daily active users
+• Implemented modern React architecture with TypeScript, reducing bug reports by 40%
+• Designed and built RESTful APIs using Node.js and Express.js with PostgreSQL database
+• Collaborated with UX/UI designers to create responsive, accessible web interfaces
+• Mentored 3 junior developers and conducted code reviews to maintain code quality
+• Optimized application performance, achieving 95% Lighthouse scores across all metrics
+
+Full Stack Developer | Digital Innovation Labs | 2019 - 2021
+• Developed e-commerce platform handling $2M+ in annual transactions
+• Built real-time features using WebSocket connections and Redis for session management
+• Integrated third-party payment systems (Stripe, PayPal) with secure transaction handling
+• Implemented automated testing strategies, achieving 85% code coverage
+• Participated in agile development process with bi-weekly sprint planning and retrospectives
+
+Frontend Developer | StartupTech Inc. | 2017 - 2019
+• Created responsive web applications using React and modern JavaScript (ES6+)
+• Collaborated with backend team to design efficient API endpoints
+• Implemented state management solutions using Redux and Context API
+• Optimized bundle sizes and load times, improving user experience metrics by 30%
+
+Junior Developer | CodeCraft Agency | 2016 - 2017
+• Developed custom WordPress themes and plugins for client websites
+• Learned modern web development practices including version control with Git
+• Assisted in database design and implementation for various client projects
+• Gained experience in client communication and project management
+
+EDUCATION
+Bachelor of Science in Computer Science | University of California, Berkeley | 2016
+• Relevant Coursework: Data Structures, Algorithms, Database Systems, Software Engineering
+• Senior Project: Built a collaborative code editor web application using React and Socket.io
+
+PROJECTS
+
+JobSearchPro Platform | Personal Project | 2024
+• Built comprehensive job search platform with multi-tenant architecture
+• Implemented user authentication, job filtering, and application tracking features
+• Technologies: React, TypeScript, Node.js, PostgreSQL, Tailwind CSS
+
+Task Management App | Open Source | 2023
+• Developed real-time collaborative task management application
+• Features include team collaboration, file attachments, and progress tracking
+• Technologies: Next.js, MongoDB, Socket.io, Material-UI
+
+CERTIFICATIONS
+• AWS Certified Developer - Associate (2023)
+• MongoDB Certified Developer (2022)
+• Google Cloud Professional Cloud Architect (2021)
+
+ACHIEVEMENTS
+• Led team that won "Best Innovation Award" at TechCorp's annual hackathon (2023)
+• Speaker at React Conference 2022: "Building Scalable React Applications"
+• Open source contributor with 500+ GitHub stars across various projects
+• Mentored 10+ developers through coding bootcamp volunteer program
+
+LANGUAGES
+• English (Native)
+• Spanish (Conversational)
+• Mandarin (Basic)
