@@ -281,6 +281,138 @@
     }, 1000);
   }
 
+  // Handle profile dropdown toggle
+  function toggleProfile(widgetId) {
+    const widget = document.getElementById(widgetId);
+    const dropdown = widget.querySelector('[data-profile-dropdown]');
+    const chevron = widget.querySelector('[data-chevron]');
+    
+    const isOpen = dropdown.style.opacity === '1';
+    
+    if (isOpen) {
+      // Close dropdown
+      dropdown.style.opacity = '0';
+      dropdown.style.visibility = 'hidden';
+      dropdown.style.transform = 'translateY(-8px)';
+      chevron.style.transform = 'rotate(0deg)';
+    } else {
+      // Open dropdown
+      dropdown.style.opacity = '1';
+      dropdown.style.visibility = 'visible';
+      dropdown.style.transform = 'translateY(0)';
+      chevron.style.transform = 'rotate(180deg)';
+      
+      // Initialize profile content if not done yet
+      initializeProfileWidget(widgetId);
+    }
+  }
+
+  // Initialize profile widget with user data
+  function initializeProfileWidget(widgetId) {
+    const widget = document.getElementById(widgetId);
+    const userInfoContainer = widget.querySelector('[data-user-info]');
+    const menuItemsContainer = widget.querySelector('[data-menu-items]');
+    const profileContainer = widget.querySelector('[data-profile-container]');
+    
+    // Check if user is logged in
+    const userData = localStorage.getItem('jobsearch_user');
+    
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        
+        // Update profile button with user avatar and name
+        profileContainer.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: white; border: 1px solid #d1d5db; border-radius: 8px; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" 
+               onclick="window.JobSearchWidgets.toggleProfile('${widgetId}')"
+               onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'"
+               onmouseout="this.style.borderColor='#d1d5db'; this.style.boxShadow='0 1px 2px rgba(0,0,0,0.05)'">
+            <img src="${user.avatar}" alt="${user.firstName} ${user.lastName}" 
+                 style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+            <span style="font-size: 14px; font-weight: 500; color: #374151;">${user.firstName}</span>
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #6b7280; transition: transform 0.2s;" data-chevron>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        `;
+        
+        // Update user info in dropdown
+        userInfoContainer.innerHTML = `
+          <p style="font-size: 14px; font-weight: 600; color: #1f2937; margin-bottom: 4px;">${user.firstName} ${user.lastName}</p>
+          <p style="font-size: 12px; color: #6b7280;">${user.email}</p>
+        `;
+        
+        // Add menu items
+        const menuItems = [
+          { path: '/dashboard', label: 'Dashboard', icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2v0' },
+          { path: '/saved-jobs', label: 'Saved Jobs', icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' },
+          { path: '/applications', label: 'My Applications', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+          { path: '/profile', label: 'Profile Settings', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z' }
+        ];
+        
+        menuItemsContainer.innerHTML = menuItems.map(item => `
+          <button onclick="window.location.href='${WIDGET_BASE_URL}${item.path}'"
+                  style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px; background: transparent; border: none; text-align: left; cursor: pointer; transition: all 0.2s; color: #374151; font-size: 14px;"
+                  onmouseover="this.style.backgroundColor='#f3f4f6'"
+                  onmouseout="this.style.backgroundColor='transparent'">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #6b7280;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${item.icon}"></path>
+            </svg>
+            ${item.label}
+          </button>
+        `).join('') + `
+          <hr style="margin: 8px 0; border: none; border-top: 1px solid #e5e7eb;">
+          <button onclick="window.JobSearchWidgets.handleLogout('${widgetId}')"
+                  style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px; background: transparent; border: none; text-align: left; cursor: pointer; transition: all 0.2s; color: #dc2626; font-size: 14px;"
+                  onmouseover="this.style.backgroundColor='#fef2f2'"
+                  onmouseout="this.style.backgroundColor='transparent'">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #dc2626;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            Sign Out
+          </button>
+        `;
+        
+      } catch (e) {
+        console.error('Failed to parse user data');
+      }
+    }
+  }
+
+  // Handle profile logout
+  function handleLogout(widgetId) {
+    localStorage.removeItem('jobsearch_user');
+    // Refresh the widget to show logged out state
+    const widget = document.getElementById(widgetId).parentElement;
+    if (widget && widget.getAttribute('data-jobsearch-widget') === 'profile') {
+      // Reinitialize the widget
+      setTimeout(() => {
+        window.JobSearchWidgets.init();
+      }, 100);
+    }
+    
+    // Trigger custom event for parent page
+    window.dispatchEvent(new CustomEvent('jobsearch:logout'));
+  }
+
+  // Close profile dropdown when clicking outside
+  document.addEventListener('click', function(event) {
+    const profileWidgets = document.querySelectorAll('[data-jobsearch-widget="profile"]');
+    profileWidgets.forEach(widget => {
+      const widgetElement = widget.querySelector('[id^="widget-"]');
+      if (widgetElement && !widgetElement.contains(event.target)) {
+        const dropdown = widgetElement.querySelector('[data-profile-dropdown]');
+        const chevron = widgetElement.querySelector('[data-chevron]');
+        if (dropdown && dropdown.style.opacity === '1') {
+          dropdown.style.opacity = '0';
+          dropdown.style.visibility = 'hidden';
+          dropdown.style.transform = 'translateY(-8px)';
+          if (chevron) chevron.style.transform = 'rotate(0deg)';
+        }
+      }
+    });
+  });
+
   // Create static widget content (now fully functional)
   function createStaticWidget(widgetType, theme) {
     const widgetId = 'widget-' + Math.random().toString(36).substr(2, 9);
@@ -397,6 +529,48 @@
             </div>
           </form>
         </div>
+      `,
+      profile: `
+        <div style="position: relative; display: inline-block;" id="${widgetId}">
+          <div data-profile-container>
+            <!-- Profile widget content will be inserted here -->
+            <div style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: white; border: 1px solid #d1d5db; border-radius: 8px; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" 
+                 onclick="window.JobSearchWidgets.toggleProfile('${widgetId}')"
+                 onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'"
+                 onmouseout="this.style.borderColor='#d1d5db'; this.style.boxShadow='0 1px 2px rgba(0,0,0,0.05)'">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #6b7280;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+              </div>
+              <span style="font-size: 14px; font-weight: 500; color: #374151;">Account</span>
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #6b7280; transition: transform 0.2s;" data-chevron>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
+          
+          <!-- Dropdown menu (hidden by default) -->
+          <div style="position: absolute; right: 0; top: 100%; margin-top: 4px; width: 256px; background: white; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000; opacity: 0; visibility: hidden; transform: translateY(-8px); transition: all 0.2s;" data-profile-dropdown>
+            <!-- User info section -->
+            <div style="padding: 16px; border-bottom: 1px solid #e5e7eb;" data-user-info>
+              <div style="text-align: center; color: #6b7280; font-size: 14px;">
+                <p>Sign in to access your profile</p>
+                <button onclick="window.location.href='${WIDGET_BASE_URL}/login'"
+                        style="margin-top: 8px; background: #3b82f6; color: white; padding: 8px 16px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; transition: all 0.2s;"
+                        onmouseover="this.style.backgroundColor='#2563eb'"
+                        onmouseout="this.style.backgroundColor='#3b82f6'">
+                  Sign In
+                </button>
+              </div>
+            </div>
+            
+            <!-- Menu items (will be populated if user is logged in) -->
+            <div style="padding: 8px 0;" data-menu-items>
+              <!-- Menu items will be inserted here dynamically -->
+            </div>
+          </div>
+        </div>
       `
     };
     
@@ -480,6 +654,8 @@
     init: initializeWidgets,
     handleSearch: handleJobSearch,
     handleLogin: handleLogin,
+    toggleProfile: toggleProfile,
+    handleLogout: handleLogout,
     version: '2.0.0'
   };
 
