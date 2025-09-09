@@ -212,6 +212,21 @@
         primaryHover: '#009638',
         primaryLight: '#10B981'
       },
+      jobsearch: {
+        primary: '#3B82F6',
+        primaryHover: '#1D4ED8',
+        primaryLight: '#3B82F6'
+      },
+      careerhub: {
+        primary: '#8B5CF6',
+        primaryHover: '#7C3AED',
+        primaryLight: '#EC4899'
+      },
+      talentfinder: {
+        primary: '#10B981',
+        primaryHover: '#047857',
+        primaryLight: '#F97316'
+      },
       modern: {
         primary: '#3b82f6',
         primaryHover: '#2563eb',
@@ -457,7 +472,7 @@
             <div style="position: relative; margin-bottom: 16px;">
               <input type="text" placeholder="Job title, keywords, or company" 
                 style="width: 100%; padding: 12px 16px 12px 44px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s; box-sizing: border-box;"
-                onfocus="this.style.borderColor='${colors.primary}'; this.style.boxShadow='0 0 0 3px rgba(${colors.primary === '#00ae42' ? '0,174,66' : '59,130,246'},0.1)'"
+                onfocus="this.style.borderColor='${colors.primary}'; this.style.boxShadow='0 0 0 3px ${colors.primary}20'"
                 onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                 onkeypress="if(event.key==='Enter') window.JobSearchWidgets.handleSearch('${widgetId}')">
               <svg style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: #9ca3af; pointer-events: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -468,7 +483,7 @@
             <div style="position: relative; margin-bottom: 16px;">
               <input type="text" placeholder="City, state, or remote"
                 style="width: 100%; padding: 12px 16px 12px 44px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s; box-sizing: border-box;"
-                onfocus="this.style.borderColor='${colors.primary}'; this.style.boxShadow='0 0 0 3px rgba(${colors.primary === '#00ae42' ? '0,174,66' : '59,130,246'},0.1)'"
+                onfocus="this.style.borderColor='${colors.primary}'; this.style.boxShadow='0 0 0 3px ${colors.primary}20'"
                 onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                 onkeypress="if(event.key==='Enter') window.JobSearchWidgets.handleSearch('${widgetId}')">
               <svg style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: #9ca3af; pointer-events: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -528,7 +543,7 @@
               <label style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">Email</label>
               <input type="email" placeholder="Enter your email" required
                 style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s; box-sizing: border-box;"
-                onfocus="this.style.borderColor='${colors.primary}'; this.style.boxShadow='0 0 0 3px rgba(${colors.primary === '#00ae42' ? '0,174,66' : '59,130,246'},0.1)'"
+                onfocus="this.style.borderColor='${colors.primary}'; this.style.boxShadow='0 0 0 3px ${colors.primary}20'"
                 onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
             </div>
             
@@ -536,7 +551,7 @@
               <label style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">Password</label>
               <input type="password" placeholder="Enter your password" required
                 style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s; box-sizing: border-box;"
-                onfocus="this.style.borderColor='${colors.primary}'; this.style.boxShadow='0 0 0 3px rgba(${colors.primary === '#00ae42' ? '0,174,66' : '59,130,246'},0.1)'"
+                onfocus="this.style.borderColor='${colors.primary}'; this.style.boxShadow='0 0 0 3px ${colors.primary}20'"
                 onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
             </div>
             
