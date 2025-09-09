@@ -25,11 +25,6 @@ export function Navigation() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-  
-  // Hide navigation on HubSpot demo page - check this AFTER all hooks
-  if (location.pathname === '/hubspot-demo') {
-    return null;
-  }
 
   const getNavLinks = () => {
     const baseLinks = [
@@ -37,7 +32,6 @@ export function Navigation() {
       { to: '/jobs', label: 'Find Jobs', icon: Briefcase },
       { to: '/companies', label: 'Companies', icon: Building2 },
       { to: '/about', label: 'About', icon: Users },
-      { to: '/hubspot-demo', label: 'HubSpot Demo', icon: Building2 },
     ];
     
     if (isAuthenticated) {
@@ -80,7 +74,7 @@ export function Navigation() {
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2">
             <span className="text-2xl">{currentBrand.logo}</span>
-            <span className={`text-xl font-bold ${currentBrand.colors.primary === 'blue' ? 'text-blue-600' : currentBrand.colors.primary === 'purple' ? 'text-purple-600' : 'text-emerald-600'}`}>
+            <span className="text-xl font-bold" style={{ color: currentBrand.cssVars['--color-primary'] }}>
               {currentBrand.name}
             </span>
           </Link>
@@ -93,22 +87,21 @@ export function Navigation() {
               <Link
                 key={to}
                 to={to}
-                className={`font-medium transition-colors ${
-                  isActive(to)
-                    ? currentBrand.colors.primary === 'blue' 
-                      ? 'text-blue-600' 
-                      : currentBrand.colors.primary === 'purple'
-                      ? 'text-purple-600'
-                      : 'text-emerald-600'
-                    : currentBrand.colors.primary === 'blue'
-                    ? `text-gray-600 ${
-                        currentBrand.colors.primary === 'blue' ? 'hover:text-blue-600' : 
-                        currentBrand.colors.primary === 'purple' ? 'hover:text-purple-600' : 'hover:text-emerald-600'
-                      }`
-                    : currentBrand.colors.primary === 'purple'
-                    ? 'text-gray-600 hover:text-purple-600'
-                    : 'text-gray-600 hover:text-emerald-600'
-                }`}
+                className="font-medium transition-colors text-gray-600"
+                style={isActive(to) ? 
+                  { color: currentBrand.cssVars['--color-accent'] } : 
+                  { '--hover-color': currentBrand.cssVars['--color-accent'] } as React.CSSProperties
+                }
+                onMouseEnter={(e) => {
+                  if (!isActive(to)) {
+                    e.currentTarget.style.color = currentBrand.cssVars['--color-accent'];
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive(to)) {
+                    e.currentTarget.style.color = '#4b5563';
+                  }
+                }}
               >
                 {label}
               </Link>
@@ -173,10 +166,17 @@ export function Navigation() {
                 </Link>
                 <Link
                   to="/register"
-                  className={`text-white px-4 py-2 rounded-lg transition-colors font-medium ${
-                    currentBrand.colors.primary === 'blue' ? 'bg-blue-600 hover:bg-blue-700' : 
-                    currentBrand.colors.primary === 'purple' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-emerald-600 hover:bg-emerald-700'
-                  }`}
+                  className="text-white px-4 py-2 rounded-lg transition-colors font-medium"
+                  style={{
+                    backgroundColor: currentBrand.cssVars['--color-primary'],
+                    '--hover-bg': currentBrand.cssVars['--color-primary-hover']
+                  } as React.CSSProperties}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-primary-hover'];
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-primary'];
+                  }}
                 >
                   Get Started
                 </Link>
@@ -207,15 +207,23 @@ export function Navigation() {
                 key={to}
                 to={to}
                 onClick={() => setIsMenuOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                  isActive(to)
-                    ? currentBrand.colors.primary === 'blue' ? 'bg-blue-50 text-blue-600' : 
-                      currentBrand.colors.primary === 'purple' ? 'bg-purple-50 text-purple-600' : 'bg-emerald-50 text-emerald-600'
-                    : `text-gray-600 hover:bg-gray-50 ${
-                        currentBrand.colors.primary === 'blue' ? 'hover:text-blue-600' : 
-                        currentBrand.colors.primary === 'purple' ? 'hover:text-purple-600' : 'hover:text-emerald-600'
-                      }`
-                }`}
+                className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-gray-600 hover:bg-gray-50"
+                style={isActive(to) ? {
+                  backgroundColor: currentBrand.cssVars['--color-accent'] + '10',
+                  color: currentBrand.cssVars['--color-accent']
+                } : {
+                  '--hover-color': currentBrand.cssVars['--color-accent']
+                } as React.CSSProperties}
+                onMouseEnter={(e) => {
+                  if (!isActive(to)) {
+                    e.currentTarget.style.color = currentBrand.cssVars['--color-accent'];
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive(to)) {
+                    e.currentTarget.style.color = '#4b5563';
+                  }
+                }}
               >
                 <Icon className="w-5 h-5" />
                 <span className="font-medium">{label}</span>
@@ -243,7 +251,16 @@ export function Navigation() {
                       key={to}
                       to={to}
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-colors"
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+                      style={{
+                        '--hover-color': currentBrand.cssVars['--color-accent']
+                      } as React.CSSProperties}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = currentBrand.cssVars['--color-accent'];
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = '#4b5563';
+                      }}
                     >
                       <Icon className="w-5 h-5" />
                       <span className="font-medium">{label}</span>
@@ -267,7 +284,16 @@ export function Navigation() {
                 <Link
                   to="/login"
                   onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-colors"
+                  className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+                  style={{
+                    '--hover-color': currentBrand.cssVars['--color-accent']
+                  } as React.CSSProperties}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = currentBrand.cssVars['--color-accent'];
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = '#4b5563';
+                  }}
                 >
                   <User className="w-5 h-5" />
                   <span className="font-medium">Sign In</span>
@@ -275,7 +301,17 @@ export function Navigation() {
                 <Link
                   to="/register"
                   onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                  className="flex items-center gap-3 px-3 py-2 rounded-lg text-white transition-colors"
+                  style={{
+                    backgroundColor: currentBrand.cssVars['--color-primary'],
+                    '--hover-bg': currentBrand.cssVars['--color-primary-hover']
+                  } as React.CSSProperties}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-primary-hover'];
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-primary'];
+                  }}
                 >
                   <User className="w-5 h-5" />
                   <span className="font-medium">Get Started</span>

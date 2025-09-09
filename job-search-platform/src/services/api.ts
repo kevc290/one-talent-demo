@@ -1,5 +1,14 @@
 // Base API configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+// Automatically detect demo mode for GitHub Pages deployment
+const isGitHubPages = typeof window !== 'undefined' && 
+  (window.location.hostname.includes('github.io') || 
+   window.location.hostname.includes('githubusercontent.com'));
+
+const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true' || isGitHubPages;
+
+const API_BASE_URL = isDemoMode 
+  ? 'demo://mock-api' // Use a dummy URL for demo mode
+  : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api');
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -71,6 +80,12 @@ class ApiClient {
   }
 
   async get<T>(endpoint: string, params?: Record<string, any>): Promise<ApiResponse<T>> {
+    // In demo mode, don't make actual API calls
+    if (isDemoMode) {
+      console.log(`[Demo Mode] Skipped GET request to ${endpoint}`);
+      return { success: false, message: 'Demo mode - API call skipped' };
+    }
+
     const url = new URL(`${this.baseURL}${endpoint}`);
     
     if (params) {
@@ -94,6 +109,12 @@ class ApiClient {
   }
 
   async post<T>(endpoint: string, data: any): Promise<ApiResponse<T>> {
+    // In demo mode, don't make actual API calls
+    if (isDemoMode) {
+      console.log(`[Demo Mode] Skipped POST request to ${endpoint}`);
+      return { success: false, message: 'Demo mode - API call skipped' };
+    }
+
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
@@ -104,6 +125,12 @@ class ApiClient {
   }
 
   async put<T>(endpoint: string, data: any): Promise<ApiResponse<T>> {
+    // In demo mode, don't make actual API calls
+    if (isDemoMode) {
+      console.log(`[Demo Mode] Skipped PUT request to ${endpoint}`);
+      return { success: false, message: 'Demo mode - API call skipped' };
+    }
+
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
@@ -114,6 +141,12 @@ class ApiClient {
   }
 
   async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
+    // In demo mode, don't make actual API calls
+    if (isDemoMode) {
+      console.log(`[Demo Mode] Skipped DELETE request to ${endpoint}`);
+      return { success: false, message: 'Demo mode - API call skipped' };
+    }
+
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       method: 'DELETE',
       headers: this.getAuthHeaders(),
@@ -124,3 +157,4 @@ class ApiClient {
 }
 
 export const apiClient = new ApiClient();
+export { isDemoMode };

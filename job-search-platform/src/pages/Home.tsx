@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Search, Filter, Users } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useTheme } from '../contexts/ThemeContext';
+import { JobSearchWidget } from '../components/embeds/JobSearchWidget';
+import { MiniJobListings } from '../components/embeds/MiniJobListings';
 
 export function Home() {
   const { currentBrand } = useTheme();
@@ -32,16 +34,28 @@ export function Home() {
             Discover opportunities across software, healthcare, and manufacturing industries. 
             Your dream career is just a click away.
           </p>
-          <Link
-            to="/jobs"
-            className={`inline-flex items-center gap-2 px-8 py-4 text-white font-semibold rounded-lg transition-colors shadow-lg ${
-              currentBrand.colors.primary === 'blue' ? 'bg-blue-600 hover:bg-blue-700' : 
-              currentBrand.colors.primary === 'purple' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-emerald-600 hover:bg-emerald-700'
-            }`}
-          >
-            Start Your Job Search
-            <ArrowRight className="w-5 h-5" />
-          </Link>
+          <div className="mb-12">
+            <Link
+              to="/jobs"
+              className={`inline-flex items-center gap-2 px-8 py-4 text-white font-semibold rounded-lg transition-colors shadow-lg ${
+                currentBrand.colors.primary === 'blue' ? 'bg-blue-600 hover:bg-blue-700' : 
+                currentBrand.colors.primary === 'purple' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-emerald-600 hover:bg-emerald-700'
+              }`}
+            >
+              Start Your Job Search
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
+          
+          {/* Embedded Job Search Components */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="flex justify-center">
+              <JobSearchWidget />
+            </div>
+            <div className="flex justify-center">
+              <MiniJobListings />
+            </div>
+          </div>
         </div>
       </div>
 

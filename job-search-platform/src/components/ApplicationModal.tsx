@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Upload, CheckCircle, FileText, AlertCircle, UserPlus } from 'lucide-react';
+import { X, Upload, CheckCircle, FileText, AlertCircle, UserPlus, Tag } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { mockAuth } from '../utils/mockAuth';
@@ -23,6 +23,7 @@ export function ApplicationModal({ job, isOpen, onClose, onApplicationSubmitted 
     password: '',
     confirmPassword: '',
   });
+  const [parsedSkills, setParsedSkills] = useState<string[]>([]);
   const [fileName, setFileName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -33,6 +34,7 @@ export function ApplicationModal({ job, isOpen, onClose, onApplicationSubmitted 
   const [showAccountCreation, setShowAccountCreation] = useState(false);
   const [accountCreated, setAccountCreated] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [dragCounter, setDragCounter] = useState(0);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -44,10 +46,51 @@ export function ApplicationModal({ job, isOpen, onClose, onApplicationSubmitted 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    await processDroppedFile(file);
+  };
 
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragCounter(prev => prev + 1);
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragCounter(prev => {
+      const newCounter = prev - 1;
+      if (newCounter === 0) {
+        setIsDragOver(false);
+      }
+      return newCounter;
+    });
+  };
+
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragCounter(0);
+    setIsDragOver(false);
+
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      await processDroppedFile(file);
+    }
+  };
+
+  const processDroppedFile = async (file: File) => {
     setFileName(file.name);
     setParseError('');
     setParseSuccess(false);
+    setParsedSkills([]);
 
     // Validate file type
     if (!isValidResumeFile(file)) {
@@ -58,7 +101,12 @@ export function ApplicationModal({ job, isOpen, onClose, onApplicationSubmitted 
     // Parse resume
     setIsParsing(true);
     try {
-      const parseResult = await parseResume(file);
+      // Try to use Claude AI if API key is available
+      const claudeApiKey = import.meta.env.VITE_CLAUDE_API_KEY;
+      const parseResult = await parseResume(file, { 
+        useClaudeAI: !!claudeApiKey,
+        apiKey: claudeApiKey 
+      });
       
       if (parseResult.success && parseResult.data) {
         // Auto-fill form fields from parsed data
@@ -69,8 +117,12 @@ export function ApplicationModal({ job, isOpen, onClose, onApplicationSubmitted 
           fullName: parsedData.fullName || prev.fullName,
           email: parsedData.email || prev.email,
           phone: parsedData.phone || prev.phone,
-          // Don't override cover letter, but could suggest improvements
         }));
+
+        // Set parsed skills
+        if (parsedData.skills && parsedData.skills.length > 0) {
+          setParsedSkills(parsedData.skills);
+        }
 
         // Update user profile if logged in
         if (user) {
@@ -82,43 +134,10 @@ export function ApplicationModal({ job, isOpen, onClose, onApplicationSubmitted 
         setParseError(parseResult.error || 'Failed to parse resume');
       }
     } catch (error) {
-      setParseError('An error occurred while parsing the resume');
+      console.error('Resume processing error:', error);
+      setParseError('Failed to parse resume. Please try again.');
     } finally {
       setIsParsing(false);
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(false);
-  };
-
-  const handleDrop = async (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(false);
-
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      const file = files[0];
-      // Create a mock input element with the file
-      const input = document.createElement('input');
-      input.type = 'file';
-      const dt = new DataTransfer();
-      dt.items.add(file);
-      input.files = dt.files;
-      
-      // Create a proper change event
-      const mockEvent = new Event('change', { bubbles: true }) as any;
-      mockEvent.target = input;
-      await handleFileChange(mockEvent as React.ChangeEvent<HTMLInputElement>);
     }
   };
 
@@ -215,7 +234,7 @@ export function ApplicationModal({ job, isOpen, onClose, onApplicationSubmitted 
             jobId: job.id,
             jobTitle: job.title,
             company: job.company,
-            appliedDate: new Date().toISOString().split('T')[0],
+            appliedDate: new Date().toISOString(),
             status: 'pending'
           });
         }
@@ -237,8 +256,11 @@ export function ApplicationModal({ job, isOpen, onClose, onApplicationSubmitted 
         setErrors({});
         setParseSuccess(false);
         setParseError('');
+        setParsedSkills([]);
         setShowAccountCreation(false);
         setAccountCreated(false);
+        setIsDragOver(false);
+        setDragCounter(0);
         onClose();
       }, 4000);
     } catch (error) {
@@ -257,6 +279,8 @@ export function ApplicationModal({ job, isOpen, onClose, onApplicationSubmitted 
       setParseError('');
       setShowAccountCreation(false);
       setAccountCreated(false);
+      setIsDragOver(false);
+      setDragCounter(0);
       onClose();
     }
   };
@@ -372,6 +396,39 @@ export function ApplicationModal({ job, isOpen, onClose, onApplicationSubmitted 
                 <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
               )}
             </div>
+
+            {/* Parsed Skills Display */}
+            {parsedSkills.length > 0 && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Tag className="w-4 h-4 text-gray-600" />
+                  <h4 className="text-sm font-medium text-gray-700">
+                    Skills Extracted from Resume ({parsedSkills.length})
+                  </h4>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {parsedSkills.map((skill, index) => (
+                    <span
+                      key={index}
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        currentBrand.colors.primary === 'blue' 
+                          ? 'bg-blue-100 text-blue-800' 
+                          : currentBrand.colors.primary === 'purple'
+                          ? 'bg-purple-100 text-purple-800'
+                          : 'bg-emerald-100 text-emerald-800'
+                      }`}
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+                <p className="mt-3 text-xs text-gray-500">
+                  {import.meta.env.VITE_CLAUDE_API_KEY 
+                    ? 'Skills extracted using AI-powered analysis' 
+                    : 'Add a Claude API key for enhanced skill extraction'}
+                </p>
+              </div>
+            )}
 
             {/* Account Creation Prompt for Unauthenticated Users */}
             {!user && (
@@ -492,6 +549,7 @@ export function ApplicationModal({ job, isOpen, onClose, onApplicationSubmitted 
                     currentBrand.colors.primary === 'blue' ? 'border-gray-300 hover:border-blue-400' : 
                     currentBrand.colors.primary === 'purple' ? 'border-gray-300 hover:border-purple-400' : 'border-gray-300 hover:border-emerald-400'
                 }`}
+                onDragEnter={handleDragEnter}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
@@ -510,8 +568,9 @@ export function ApplicationModal({ job, isOpen, onClose, onApplicationSubmitted 
                 ) : parseSuccess ? (
                   <div className="flex flex-col items-center">
                     <CheckCircle className="w-8 h-8 text-green-600 mb-2" />
-                    <p className="text-sm text-green-700 mb-1">Resume parsed successfully!</p>
-                    <p className="text-xs text-green-600">Form fields have been auto-filled</p>
+                    <p className="text-sm text-green-700 mb-1">Resume processed successfully!</p>
+                    <p className="text-xs text-green-600">Form fields have been auto-filled with demo data</p>
+                    <p className="text-xs text-blue-600 mt-1">📝 Note: GitHub Pages uses mock parsing for demo purposes</p>
                   </div>
                 ) : parseError ? (
                   <div className="flex flex-col items-center">

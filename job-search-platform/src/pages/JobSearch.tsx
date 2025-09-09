@@ -8,8 +8,10 @@ import { SkeletonCard } from '../components/SkeletonCard';
 import { ErrorState } from '../components/ErrorState';
 import { jobsService, type JobFilters } from '../services/jobsService';
 import type { Job } from '../data/jobs';
+import { useTheme } from '../contexts/ThemeContext';
 
 export function JobSearch() {
+  const { currentBrand } = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -138,7 +140,11 @@ export function JobSearch() {
             {/* View Toggle */}
             <div className="flex items-center gap-4">
               {activeFilters.length > 0 && (
-                <span className="text-sm text-gray-500 bg-blue-100 text-blue-700 px-2 py-1 rounded-full animate-scaleIn">
+                <span className="text-sm px-2 py-1 rounded-full animate-scaleIn"
+                      style={{
+                        backgroundColor: currentBrand.cssVars['--color-accent'] + '20',
+                        color: currentBrand.cssVars['--color-accent']
+                      }}>
                   {activeFilters.length} active
                 </span>
               )}
@@ -147,9 +153,25 @@ export function JobSearch() {
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded transition-all duration-200 transform hover:scale-105 ${
                     viewMode === 'grid' 
-                      ? 'bg-white shadow-sm text-blue-600' 
-                      : 'text-gray-600 hover:text-blue-600'
+                      ? 'bg-white shadow-sm' 
+                      : 'text-gray-600'
                   }`}
+                  style={viewMode === 'grid' 
+                    ? { color: currentBrand.cssVars['--color-accent'] }
+                    : {
+                        '--hover-color': currentBrand.cssVars['--color-accent']
+                      } as React.CSSProperties
+                  }
+                  onMouseEnter={(e) => {
+                    if (viewMode !== 'grid') {
+                      e.currentTarget.style.color = currentBrand.cssVars['--color-accent'];
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (viewMode !== 'grid') {
+                      e.currentTarget.style.color = '#4b5563';
+                    }
+                  }}
                   aria-label="Grid view"
                 >
                   <Grid3x3 className="w-4 h-4 md:w-5 md:h-5" />
@@ -158,9 +180,25 @@ export function JobSearch() {
                   onClick={() => setViewMode('list')}
                   className={`p-2 rounded transition-all duration-200 transform hover:scale-105 ${
                     viewMode === 'list' 
-                      ? 'bg-white shadow-sm text-blue-600' 
-                      : 'text-gray-600 hover:text-blue-600'
+                      ? 'bg-white shadow-sm' 
+                      : 'text-gray-600'
                   }`}
+                  style={viewMode === 'list' 
+                    ? { color: currentBrand.cssVars['--color-accent'] }
+                    : {
+                        '--hover-color': currentBrand.cssVars['--color-accent']
+                      } as React.CSSProperties
+                  }
+                  onMouseEnter={(e) => {
+                    if (viewMode !== 'list') {
+                      e.currentTarget.style.color = currentBrand.cssVars['--color-accent'];
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (viewMode !== 'list') {
+                      e.currentTarget.style.color = '#4b5563';
+                    }
+                  }}
                   aria-label="List view"
                 >
                   <List className="w-4 h-4 md:w-5 md:h-5" />
@@ -188,7 +226,18 @@ export function JobSearch() {
             {activeFilters.length > 0 && !isSearching && (
               <button
                 onClick={() => setActiveFilters([])}
-                className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
+                className="text-sm font-medium transition-colors"
+                style={{
+                  color: currentBrand.cssVars['--color-accent'],
+                  '--hover-color': currentBrand.colors.primary === 'kelly' ? '#009638' : currentBrand.cssVars['--color-primary-hover']
+                } as React.CSSProperties}
+                onMouseEnter={(e) => {
+                  const hoverColor = currentBrand.colors.primary === 'kelly' ? '#009638' : currentBrand.cssVars['--color-primary-hover'];
+                  e.currentTarget.style.color = hoverColor;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = currentBrand.cssVars['--color-accent'];
+                }}
               >
                 Clear filters
               </button>

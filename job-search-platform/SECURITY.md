@@ -1,28 +1,25 @@
 # Security Configuration
 
-## Environment Variables
+## Demo Mode (Recommended)
 
-**⚠️ IMPORTANT: Never commit API keys or sensitive data to version control!**
+**✅ SAFE: This project runs in demo mode by default with no API keys required!**
 
-### Local Development Setup
+### Quick Setup
 
-1. **Copy the example files:**
+1. **Copy the example file:**
    ```bash
    cp .env.example .env
-   cp .env.production.example .env.production
-   cp functions/.env.example functions/.env
    ```
 
-2. **Fill in your actual values:**
-   - Replace `your-firebase-api-key-here` with your real Firebase API key
-   - Replace `your-project-id` with your Firebase project ID
-   - Generate a secure JWT secret for `functions/.env`
+2. **The default configuration is secure:**
+   ```bash
+   VITE_DEMO_MODE=true  # Uses mock data, no external API calls
+   ```
 
 ### Environment Files
 
 - **`.env`** - Local development environment
-- **`.env.production`** - Production environment (Firebase/deployment)
-- **`functions/.env`** - Firebase Functions environment
+- **`.env.production`** - Production deployment configuration
 - **`.env.github`** - GitHub Pages demo configuration (safe to commit)
 
 ### Demo Mode
@@ -36,39 +33,37 @@ VITE_DEMO_MODE=true
 
 This will use mock data and disable all API calls.
 
-### Firebase Configuration
+### Custom Backend Configuration (Optional)
 
-Your Firebase API key is safe to expose in frontend code as it's designed for client-side use, but the project itself should be properly configured with:
+If you want to connect to a real backend instead of using demo mode:
 
-1. **Firebase Security Rules** - Restrict database access
-2. **API Key Restrictions** - Limit HTTP referrers in Google Cloud Console
-3. **Authentication** - Require user login for sensitive operations
+1. **Set demo mode to false:**
+   ```bash
+   VITE_DEMO_MODE=false
+   ```
 
-### JWT Secret
+2. **Configure your API endpoint:**
+   ```bash
+   VITE_API_BASE_URL=https://your-api-domain.com/api
+   ```
 
-Generate a secure JWT secret for your backend:
-
-```bash
-# Generate a random 256-bit key
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-```
+3. **Secure your backend properly** with authentication and rate limiting
 
 ### Deployment Security
 
-- **GitHub Pages**: Only use demo mode or restrict API keys by HTTP referrer
-- **Firebase Functions**: Use environment variables in Firebase Functions config
+- **GitHub Pages/Static Hosting**: Demo mode is automatically secure (no API calls)
+- **Custom Backend**: Implement proper authentication, rate limiting, and CORS
 - **Production**: Always use HTTPS and secure headers
 
 ## What NOT to commit:
 
-- ❌ Real API keys
-- ❌ JWT secrets  
+- ❌ Real API keys (if using custom backend)
 - ❌ Database passwords
-- ❌ Firebase service account keys
-- ❌ Any `.env` files with real values
+- ❌ Any `.env` files with sensitive values
 
 ## What IS safe to commit:
 
+- ✅ Demo mode configuration (`VITE_DEMO_MODE=true`)
 - ✅ Example environment files (`.env.example`)
-- ✅ Public configuration (like `.env.github` with placeholders)
+- ✅ Public configuration (like `.env.github`)
 - ✅ Documentation about environment setup

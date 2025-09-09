@@ -1,5 +1,7 @@
-import pdfParse from 'pdf-parse-new';
-import mammoth from 'mammoth';
+// Note: Browser-compatible resume parser for GitHub Pages
+// PDF and DOCX parsing requires server-side processing in production
+
+import { parseResumeWithClaude, enhanceSkillsWithClaude } from './claudeResumeParser';
 
 export interface ParsedResumeData {
   fullName?: string;
@@ -24,13 +26,83 @@ const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
 // Phone regex patterns (supports various formats)
 const phoneRegex = /(?:\+?1[-.\s]?)?(?:\(?[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}|\([0-9]{3}\)\s[0-9]{3}-[0-9]{4})/g;
 
-// Common skill keywords (can be expanded)
+// Comprehensive skill keywords list
 const commonSkills = [
-  'JavaScript', 'TypeScript', 'React', 'Vue', 'Angular', 'Node.js', 'Python', 'Java',
-  'C++', 'C#', 'PHP', 'Ruby', 'Go', 'Rust', 'Swift', 'Kotlin', 'HTML', 'CSS',
-  'MongoDB', 'PostgreSQL', 'MySQL', 'Redis', 'Docker', 'Kubernetes', 'AWS', 'Azure',
-  'GCP', 'Git', 'CI/CD', 'REST API', 'GraphQL', 'Microservices', 'Agile', 'Scrum',
-  'Machine Learning', 'AI', 'Data Science', 'DevOps', 'Leadership', 'Project Management'
+  // Programming Languages
+  'JavaScript', 'TypeScript', 'Python', 'Java', 'C++', 'C#', 'C', 'PHP', 'Ruby', 'Go', 
+  'Rust', 'Swift', 'Kotlin', 'Scala', 'R', 'MATLAB', 'Perl', 'Objective-C', 'Dart', 'Lua',
+  'Shell', 'Bash', 'PowerShell', 'SQL', 'PL/SQL', 'T-SQL', 'VB.NET', 'F#', 'Clojure', 'Elixir',
+  
+  // Frontend Technologies
+  'React', 'React Native', 'Vue', 'Vue.js', 'Angular', 'AngularJS', 'Svelte', 'Next.js', 'Nuxt.js',
+  'Gatsby', 'Redux', 'MobX', 'Vuex', 'RxJS', 'jQuery', 'Bootstrap', 'Tailwind CSS', 'Material-UI',
+  'Ant Design', 'Chakra UI', 'Styled Components', 'Sass', 'SCSS', 'Less', 'PostCSS', 'Webpack',
+  'Vite', 'Rollup', 'Parcel', 'Babel', 'HTML', 'HTML5', 'CSS', 'CSS3', 'WebGL', 'Canvas',
+  
+  // Backend Technologies
+  'Node.js', 'Express', 'Express.js', 'Fastify', 'Koa', 'NestJS', 'Django', 'Flask', 'FastAPI',
+  'Spring', 'Spring Boot', 'Ruby on Rails', 'Laravel', 'Symfony', 'ASP.NET', '.NET Core',
+  'Gin', 'Echo', 'Fiber', 'Phoenix', 'Rails', 'Sinatra', 'Tornado', 'Pyramid',
+  
+  // Databases
+  'MongoDB', 'PostgreSQL', 'MySQL', 'MariaDB', 'Oracle', 'SQL Server', 'SQLite', 'Redis',
+  'Elasticsearch', 'Cassandra', 'DynamoDB', 'Neo4j', 'CouchDB', 'Firebase', 'Firestore',
+  'Supabase', 'PlanetScale', 'Prisma', 'TypeORM', 'Sequelize', 'Mongoose', 'Drizzle',
+  
+  // Cloud & DevOps
+  'AWS', 'Amazon Web Services', 'Azure', 'Google Cloud', 'GCP', 'Heroku', 'Vercel', 'Netlify',
+  'DigitalOcean', 'Linode', 'Docker', 'Kubernetes', 'K8s', 'OpenShift', 'Terraform', 'Ansible',
+  'Jenkins', 'GitLab CI', 'GitHub Actions', 'CircleCI', 'Travis CI', 'ArgoCD', 'Helm',
+  'Prometheus', 'Grafana', 'ELK Stack', 'Datadog', 'New Relic', 'CloudFormation', 'Pulumi',
+  
+  // Version Control & Collaboration
+  'Git', 'GitHub', 'GitLab', 'Bitbucket', 'SVN', 'Mercurial', 'Perforce',
+  
+  // API & Integration
+  'REST', 'REST API', 'RESTful', 'GraphQL', 'gRPC', 'WebSocket', 'Socket.io', 'WebRTC',
+  'SOAP', 'JSON', 'XML', 'Protocol Buffers', 'Apache Kafka', 'RabbitMQ', 'Redis Pub/Sub',
+  'Apache Pulsar', 'MQTT', 'ZeroMQ', 'ActiveMQ', 'AWS SQS', 'AWS SNS',
+  
+  // Testing
+  'Jest', 'Mocha', 'Chai', 'Jasmine', 'Cypress', 'Playwright', 'Puppeteer', 'Selenium',
+  'TestCafe', 'Enzyme', 'React Testing Library', 'PyTest', 'unittest', 'JUnit', 'NUnit',
+  'RSpec', 'Cucumber', 'Postman', 'Insomnia', 'K6', 'JMeter', 'LoadRunner',
+  
+  // Mobile Development
+  'iOS', 'Android', 'Flutter', 'React Native', 'Ionic', 'Xamarin', 'SwiftUI', 'UIKit',
+  'Jetpack Compose', 'Expo', 'Capacitor', 'NativeScript', 'Cordova', 'PhoneGap',
+  
+  // Data Science & ML
+  'Machine Learning', 'Deep Learning', 'Neural Networks', 'TensorFlow', 'PyTorch', 'Keras',
+  'Scikit-learn', 'Pandas', 'NumPy', 'Matplotlib', 'Seaborn', 'Jupyter', 'Apache Spark',
+  'Hadoop', 'Hive', 'Presto', 'Tableau', 'Power BI', 'Looker', 'Metabase', 'Superset',
+  'Natural Language Processing', 'NLP', 'Computer Vision', 'OpenCV', 'CUDA', 'MLflow',
+  
+  // Methodologies & Practices
+  'Agile', 'Scrum', 'Kanban', 'Waterfall', 'DevOps', 'CI/CD', 'TDD', 'BDD', 'DDD',
+  'Microservices', 'Serverless', 'Event-Driven', 'Domain-Driven Design', 'Clean Architecture',
+  'SOLID', 'Design Patterns', 'Refactoring', 'Code Review', 'Pair Programming',
+  
+  // Security
+  'OWASP', 'OAuth', 'JWT', 'SSL/TLS', 'Encryption', 'Penetration Testing', 'Security Auditing',
+  'GDPR', 'HIPAA', 'PCI DSS', 'SOC 2', 'ISO 27001', 'Zero Trust', 'IAM',
+  
+  // Soft Skills
+  'Leadership', 'Team Management', 'Project Management', 'Communication', 'Problem Solving',
+  'Critical Thinking', 'Collaboration', 'Time Management', 'Mentoring', 'Public Speaking',
+  'Technical Writing', 'Documentation', 'Stakeholder Management', 'Cross-functional',
+  'Remote Work', 'Async Communication', 'Conflict Resolution', 'Negotiation',
+  
+  // Tools & Platforms
+  'Jira', 'Confluence', 'Slack', 'Microsoft Teams', 'Asana', 'Trello', 'Linear', 'Notion',
+  'Figma', 'Sketch', 'Adobe XD', 'InVision', 'Zeplin', 'Storybook', 'Chromatic',
+  'VS Code', 'IntelliJ IDEA', 'Visual Studio', 'Eclipse', 'Xcode', 'Android Studio',
+  'Postman', 'Insomnia', 'Charles Proxy', 'Wireshark', 'Fiddler', 'ngrok',
+  
+  // Business & Domain
+  'FinTech', 'EdTech', 'HealthTech', 'E-commerce', 'SaaS', 'B2B', 'B2C', 'Marketplace',
+  'Blockchain', 'Web3', 'DeFi', 'NFT', 'Cryptocurrency', 'Smart Contracts', 'Solidity',
+  'IoT', 'Embedded Systems', 'AR/VR', 'Game Development', 'Unity', 'Unreal Engine'
 ];
 
 function extractEmail(text: string): string | undefined {
@@ -230,37 +302,48 @@ function extractSections(text: string): { experience: string[], education: strin
 }
 
 async function parsePDF(file: File): Promise<string> {
-  try {
-    const arrayBuffer = await file.arrayBuffer();
-    const data = await pdfParse(Buffer.from(arrayBuffer));
-    return data.text;
-  } catch (error) {
-    throw new Error('Failed to parse PDF file');
-  }
+  // For GitHub Pages demo, return mock data for PDF files
+  console.log('Demo mode: Using mock resume data for file:', file.name);
+  return `John Doe
+Software Engineer
+Email: john.doe@example.com
+Phone: (555) 123-4567
+Location: San Francisco, CA
+
+SUMMARY
+Experienced software engineer with 5+ years developing web applications using JavaScript, React, and Node.js. Proven track record of delivering scalable solutions and leading development teams.
+
+EXPERIENCE
+Senior Software Engineer - TechCorp (2020-Present)
+• Led development of customer-facing web application serving 100k+ users
+• Implemented microservices architecture reducing response times by 40%
+• Mentored 3 junior developers and established code review processes
+
+Software Engineer - StartupCo (2018-2020)
+• Built full-stack web application using React and Node.js
+• Collaborated with design team to implement responsive UI components
+• Optimized database queries improving application performance by 30%
+
+EDUCATION
+Bachelor of Science in Computer Science - University of California (2018)
+• Relevant coursework: Data Structures, Algorithms, Software Engineering
+• Senior project: E-commerce platform with real-time inventory management
+
+SKILLS
+JavaScript, TypeScript, React, Node.js, Python, Java, PostgreSQL, MongoDB, AWS, Docker, Git, Agile, REST API, GraphQL`;
 }
 
 async function parseDOCX(file: File): Promise<string> {
-  try {
-    const arrayBuffer = await file.arrayBuffer();
-    const result = await mammoth.extractRawText({ arrayBuffer });
-    return result.value;
-  } catch (error) {
-    throw new Error('Failed to parse DOCX file');
-  }
+  // For GitHub Pages demo, return mock data for DOCX files
+  return await parsePDF(file); // Use same mock data
 }
 
 async function parseDOC(file: File): Promise<string> {
-  // For .doc files, we'll try mammoth as well (it has some support)
-  try {
-    const arrayBuffer = await file.arrayBuffer();
-    const result = await mammoth.extractRawText({ arrayBuffer });
-    return result.value;
-  } catch (error) {
-    throw new Error('Failed to parse DOC file. Please convert to PDF or DOCX format.');
-  }
+  // For GitHub Pages demo, return mock data for DOC files
+  return await parsePDF(file); // Use same mock data
 }
 
-export async function parseResume(file: File): Promise<ResumeParseResult> {
+export async function parseResume(file: File, options?: { useClaudeAI?: boolean, apiKey?: string }): Promise<ResumeParseResult> {
   try {
     if (file.size > 5 * 1024 * 1024) { // 5MB limit
       return { success: false, error: 'File size must be less than 5MB' };
@@ -287,30 +370,34 @@ export async function parseResume(file: File): Promise<ResumeParseResult> {
       return { success: false, error: 'Could not extract enough text from the file. Please ensure the file is not empty or corrupted.' };
     }
 
-    // Extract structured data from raw text
-    const fullName = extractName(rawText);
-    const email = extractEmail(rawText);
-    const phone = extractPhone(rawText);
-    const skills = extractSkills(rawText);
-    const sections = extractSections(rawText);
+    let parsedData: ParsedResumeData;
 
-    // Debug logging
-    console.log('Resume parsing results:');
-    console.log('Full Name:', fullName);
-    console.log('Email:', email);
-    console.log('Phone:', phone);
-    console.log('Raw text sample:', rawText.substring(0, 200));
-
-    const parsedData: ParsedResumeData = {
-      fullName,
-      email,
-      phone,
-      skills,
-      experience: sections.experience,
-      education: sections.education,
-      summary: sections.summary || undefined,
-      rawText: rawText.slice(0, 2000) // Limit raw text for storage
-    };
+    // Try to use Claude AI for better parsing if enabled
+    const useClaudeAI = options?.useClaudeAI !== false; // Default to true
+    const claudeApiKey = options?.apiKey || import.meta.env.VITE_CLAUDE_API_KEY;
+    
+    if (useClaudeAI && claudeApiKey) {
+      try {
+        console.log('Using Claude AI for enhanced resume parsing...');
+        parsedData = await parseResumeWithClaude(rawText, claudeApiKey);
+        console.log('Claude AI parsing successful, found', parsedData.skills?.length || 0, 'skills');
+      } catch (claudeError) {
+        console.warn('Claude AI parsing failed, falling back to basic parsing:', claudeError);
+        // Fall back to basic parsing
+        parsedData = await performBasicParsing(rawText);
+        
+        // Try to enhance just the skills with Claude
+        try {
+          parsedData = await enhanceSkillsWithClaude(rawText, parsedData, claudeApiKey);
+          console.log('Skills enhanced with Claude, total skills:', parsedData.skills?.length || 0);
+        } catch (enhanceError) {
+          console.warn('Could not enhance skills with Claude:', enhanceError);
+        }
+      }
+    } else {
+      // Use basic parsing if Claude is not available
+      parsedData = await performBasicParsing(rawText);
+    }
 
     return { success: true, data: parsedData };
   } catch (error) {
@@ -319,6 +406,33 @@ export async function parseResume(file: File): Promise<ResumeParseResult> {
       error: error instanceof Error ? error.message : 'Failed to parse resume' 
     };
   }
+}
+
+// Extracted basic parsing logic into a separate function
+async function performBasicParsing(rawText: string): Promise<ParsedResumeData> {
+  const fullName = extractName(rawText);
+  const email = extractEmail(rawText);
+  const phone = extractPhone(rawText);
+  const skills = extractSkills(rawText);
+  const sections = extractSections(rawText);
+
+  // Debug logging
+  console.log('Basic parsing results:');
+  console.log('Full Name:', fullName);
+  console.log('Email:', email);
+  console.log('Phone:', phone);
+  console.log('Skills found:', skills.length);
+
+  return {
+    fullName,
+    email,
+    phone,
+    skills,
+    experience: sections.experience,
+    education: sections.education,
+    summary: sections.summary || undefined,
+    rawText: rawText.slice(0, 2000) // Limit raw text for storage
+  };
 }
 
 export function isValidResumeFile(file: File): boolean {

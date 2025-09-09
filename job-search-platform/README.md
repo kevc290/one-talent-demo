@@ -14,9 +14,9 @@ A modern, multi-brand job search platform built with React, TypeScript, and Vite
 
 ## 🛡️ Security
 
-**⚠️ Important: Read [SECURITY.md](./SECURITY.md) before setup!**
+**ℹ️ Note: This project runs in demo mode by default using mock data - no API keys required!**
 
-This project requires proper environment configuration to avoid exposing sensitive API keys.
+For production deployments with real backends, see [SECURITY.md](./SECURITY.md) for proper configuration.
 
 ## 🏗️ Quick Start
 
@@ -79,15 +79,14 @@ The platform supports multiple brand identities:
 
 ### Local Development (.env)
 ```bash
-VITE_API_BASE_URL=http://localhost:3001/api
-VITE_DEMO_MODE=false
+VITE_DEMO_MODE=true
+VITE_API_BASE_URL=http://localhost:3001/api  # Only needed if using custom backend
 ```
 
 ### Production (.env.production)
 ```bash
-VITE_API_URL=https://your-firebase-functions-url
-VITE_FIREBASE_API_KEY=your-api-key
-# ... other Firebase config
+VITE_DEMO_MODE=true  # Recommended for static deployments
+# VITE_API_BASE_URL=https://your-api-domain.com/api  # Only if you have a backend
 ```
 
 ### Demo Mode
@@ -104,10 +103,6 @@ VITE_DEMO_MODE=true  # Uses mock data, no API calls
 - `npm run lint` - Run ESLint
 - `npm run typecheck` - Run TypeScript checks
 
-### Firebase
-- `npm run fb:emulators` - Start Firebase emulators
-- `npm run fb:deploy:functions` - Deploy Firebase Functions
-- `npm run fb:deploy` - Deploy to Firebase Hosting
 
 ### GitHub Pages
 - `npm run gh-pages:deploy` - Deploy to GitHub Pages
@@ -130,14 +125,9 @@ The platform provides embeddable widgets for third-party integration:
 
 ## 🚀 Deployment
 
-### GitHub Pages (Static Demo)
+### GitHub Pages
 ```bash
-npm run gh-pages:deploy:demo
-```
-
-### Firebase (Full-stack)
-```bash
-npm run fb:deploy
+npm run deploy:demo
 ```
 
 ### Custom Deployment

@@ -24,13 +24,19 @@ export function BrandSwitcher() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
-          currentBrand.colors.primary === 'blue'
-            ? 'border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100'
-            : currentBrand.colors.primary === 'purple'
-            ? 'border-purple-200 text-purple-700 bg-purple-50 hover:bg-purple-100'
-            : 'border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100'
-        }`}
+        className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border transition-colors"
+        style={{
+          borderColor: currentBrand.cssVars['--color-accent'] + '40', // 25% opacity
+          color: currentBrand.cssVars['--color-accent'],
+          backgroundColor: currentBrand.cssVars['--color-accent'] + '10', // 6% opacity
+          '--hover-bg': currentBrand.cssVars['--color-accent'] + '20' // 12% opacity
+        } as React.CSSProperties}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-accent'] + '20';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-accent'] + '10';
+        }}
       >
         <span className="text-lg">{currentBrand.logo}</span>
         <span className="hidden sm:inline">{currentBrand.name}</span>
@@ -52,7 +58,7 @@ export function BrandSwitcher() {
                 <span className="text-lg">{brand.logo}</span>
                 <span className="flex-1">{brand.name}</span>
                 {currentBrand.id === brand.id && (
-                  <Check className="w-4 h-4 text-green-600" />
+                  <Check className="w-4 h-4" style={{ color: currentBrand.cssVars['--color-accent'] }} />
                 )}
               </button>
             ))}

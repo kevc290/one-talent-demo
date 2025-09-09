@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Widget Demo - Third-Party Integration</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .demo-item {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .demo-item h3 {
+            margin: 0 0 1rem 0;
+            color: #1a202c;
+        }
+        
+        .demo-item p {
+            color: #4a5568;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .widget-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 120px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .navigation-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4c51bf;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #4a5568;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .nav-link:hover {
+            color: #4c51bf;
+        }
+        
+        .code-block {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        .highlight {
+            color: #68d391;
+        }
+        
+        .auth-demo {
+            background: #fef5e7;
+            border: 2px solid #ed8936;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        
+        .auth-button {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 0 0.5rem;
+        }
+        
+        .auth-button:hover {
+            background: #3182ce;
+        }
+        
+        .logout-button {
+            background: #f56565;
+        }
+        
+        .logout-button:hover {
+            background: #e53e3e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation with Profile Widget -->
+        <nav class="navigation-bar">
+            <div class="nav-left">
+                <div class="logo">YourApp</div>
+                <div class="nav-links">
+                    <a href="#" class="nav-link">Dashboard</a>
+                    <a href="#" class="nav-link">Projects</a>
+                    <a href="#" class="nav-link">Team</a>
+                    <a href="#" class="nav-link">Settings</a>
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <a href="#" class="nav-link">Support</a>
+                <!-- Profile Widget Embedded Here -->
+                <div data-jobsearch-widget="profile" data-theme="modern"></div>
+            </div>
+        </nav>
+        
+        <div class="header">
+            <h1 style="margin: 0 0 1rem 0; color: #1a202c; font-size: 2.5rem;">Profile Widget Demo</h1>
+            <p style="color: #4a5568; font-size: 1.125rem; max-width: 600px; margin: 0 auto;">
+                See how the JobSearch Profile Widget integrates seamlessly into any website navigation. 
+                This widget provides complete user account management in a compact, customizable dropdown.
+            </p>
+        </div>
+        
+        <!-- Authentication Demo -->
+        <div class="demo-section">
+            <h2 style="margin: 0 0 1rem 0; color: #1a202c;">Authentication Demo</h2>
+            <div class="auth-demo">
+                <p><strong>Demo User Management:</strong></p>
+                <p>Toggle between authenticated and unauthenticated states to see how the widget adapts:</p>
+                <button class="auth-button" onclick="simulateLogin()">Simulate Login</button>
+                <button class="auth-button logout-button" onclick="simulateLogout()">Simulate Logout</button>
+            </div>
+        </div>
+        
+        <!-- Widget Examples -->
+        <div class="demo-section">
+            <h2 style="margin: 0 0 1rem 0; color: #1a202c;">Profile Widget Variations</h2>
+            
+            <div class="demo-grid">
+                <div class="demo-item">
+                    <h3>Modern Theme (Default)</h3>
+                    <p>Clean, modern design with subtle shadows and blue accents</p>
+                    <div class="widget-container">
+                        <div data-jobsearch-widget="profile" data-theme="modern"></div>
+                    </div>
+                </div>
+                
+                <div class="demo-item">
+                    <h3>Classic Theme</h3>
+                    <p>Traditional styling with gray tones and simple borders</p>
+                    <div class="widget-container">
+                        <div data-jobsearch-widget="profile" data-theme="classic"></div>
+                    </div>
+                </div>
+                
+                <div class="demo-item">
+                    <h3>Minimal Theme</h3>
+                    <p>Ultra-clean design with minimal visual elements</p>
+                    <div class="widget-container">
+                        <div data-jobsearch-widget="profile" data-theme="minimal"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Implementation Guide -->
+        <div class="demo-section">
+            <h2 style="margin: 0 0 1rem 0; color: #1a202c;">How to Implement</h2>
+            
+            <h3>1. Include the Script</h3>
+            <div class="code-block">
+&lt;script src="<span class="highlight">https://your-domain.com/embed.js</span>"&gt;&lt;/script&gt;
+            </div>
+            
+            <h3>2. Add the Widget</h3>
+            <div class="code-block">
+&lt;div <span class="highlight">data-jobsearch-widget="profile"</span> data-theme="modern"&gt;&lt;/div&gt;
+            </div>
+            
+            <h3>3. Listen for Events (Optional)</h3>
+            <div class="code-block">
+// Listen for user navigation
+window.addEventListener('<span class="highlight">jobsearch:navigate</span>', (event) => {
+    const path = event.detail.path;
+    // Handle navigation to your app pages
+    window.location.href = path;
+});
+
+// Listen for user logout
+window.addEventListener('<span class="highlight">jobsearch:logout</span>', () => {
+    // Handle user logout in your application
+    console.log('User logged out');
+});
+            </div>
+            
+            <h3>Features</h3>
+            <ul style="text-align: left; color: #4a5568; max-width: 600px;">
+                <li><strong>Automatic Authentication Detection:</strong> Shows appropriate UI based on user login state</li>
+                <li><strong>Multiple Themes:</strong> Choose from modern, classic, or minimal designs</li>
+                <li><strong>Responsive Design:</strong> Works perfectly on desktop and mobile</li>
+                <li><strong>Custom Events:</strong> Integration hooks for navigation and logout</li>
+                <li><strong>Secure:</strong> Uses localStorage for user session management</li>
+                <li><strong>Lightweight:</strong> Minimal footprint with no external dependencies</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Load the JobSearch Widget Script -->
+    <script>
+        // Determine the correct script URL based on environment
+        const scriptUrl = window.location.hostname === 'localhost' 
+            ? 'http://localhost:5173/embed.js'
+            : window.location.origin.includes('github.io')
+            ? 'https://kevc290.github.io/one-talent-demo/embed.js'
+            : '/embed.js';
+            
+        const script = document.createElement('script');
+        script.src = scriptUrl;
+        script.async = true;
+        document.head.appendChild(script);
+        
+        // Demo functions for authentication
+        function simulateLogin() {
+            const demoUser = {
+                id: 'demo-user',
+                firstName: 'John',
+                lastName: 'Doe',
+                email: 'john.doe@example.com',
+                avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+            };
+            
+            localStorage.setItem('jobsearch_user', JSON.stringify(demoUser));
+            
+            // Reinitialize widgets to reflect login state
+            setTimeout(() => {
+                if (window.JobSearchWidgets) {
+                    window.JobSearchWidgets.init();
+                }
+            }, 100);
+        }
+        
+        function simulateLogout() {
+            localStorage.removeItem('jobsearch_user');
+            
+            // Reinitialize widgets to reflect logout state
+            setTimeout(() => {
+                if (window.JobSearchWidgets) {
+                    window.JobSearchWidgets.init();
+                }
+            }, 100);
+        }
+        
+        // Listen for custom events
+        window.addEventListener('jobsearch:navigate', (event) => {
+            alert(`Navigation requested to: ${event.detail.path}`);
+        });
+        
+        window.addEventListener('jobsearch:logout', () => {
+            alert('User logged out via widget');
+        });
+    </script>
+</body>
+</html>

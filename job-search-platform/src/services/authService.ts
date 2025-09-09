@@ -1,10 +1,7 @@
-import { apiClient } from './api';
+import { apiClient, isDemoMode } from './api';
 import type { ApiResponse } from './api';
 import type { User, LoginCredentials, RegisterCredentials, UserProfile } from '../types/auth';
 import type { ParsedResumeData } from '../utils/resumeParser';
-
-// Check if we're in demo mode
-const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
 
 // Mock user data for demo mode
 const mockUser: User = {

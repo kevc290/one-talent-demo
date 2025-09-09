@@ -9,9 +9,9 @@ import { JobDetail } from './pages/JobDetail';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
-import { HubSpotDemo } from './pages/HubSpotDemo';
 import { SavedJobs } from './pages/SavedJobs';
 import { Admin } from './pages/Admin';
+import { EditProfile } from './pages/EditProfile';
 import { SearchWidget } from './pages/widgets/SearchWidget';
 import { ListingsWidget } from './pages/widgets/ListingsWidget';
 import { LoginWidget } from './pages/widgets/LoginWidget';
@@ -32,7 +32,6 @@ function App() {
             <Route path="/job/:id" element={<JobDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/hubspot-demo" element={<HubSpotDemo />} />
             
             {/* Widget Routes (for iframe embedding) */}
             <Route path="/widget/search" element={<SearchWidget />} />
@@ -71,9 +70,7 @@ function App() {
             } />
             <Route path="/profile" element={
               <ProtectedRoute>
-                <div className="min-h-screen flex items-center justify-center">
-                  <p className="text-gray-500">Profile settings coming soon...</p>
-                </div>
+                <EditProfile />
               </ProtectedRoute>
             } />
             <Route path="/admin" element={

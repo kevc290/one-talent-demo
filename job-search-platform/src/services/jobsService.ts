@@ -1,10 +1,7 @@
-import { apiClient } from './api';
+import { apiClient, isDemoMode } from './api';
 import type { ApiResponse, PaginatedResponse } from './api';
 import type { Job } from '../data/jobs';
 import { jobs } from '../data/jobs';
-
-// Check if we're in demo mode
-const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
 
 export interface JobFilters {
   search?: string;
