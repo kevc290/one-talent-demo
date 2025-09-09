@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { jobsService } from '../services/jobsService';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface JobCardProps {
   job: Job;
@@ -13,6 +14,7 @@ interface JobCardProps {
 export function JobCard({ job, view }: JobCardProps) {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { currentBrand } = useTheme();
   const [isSaved, setIsSaved] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(false);
 
@@ -76,22 +78,54 @@ export function JobCard({ job, view }: JobCardProps) {
   if (view === 'list') {
     return (
       <div 
-        className="group relative bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-blue-200 hover-lift animate-fadeIn"
-        onMouseEnter={() => setShowQuickActions(true)}
-        onMouseLeave={() => setShowQuickActions(false)}
+        className="group relative bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 hover-lift animate-fadeIn"
+        style={{
+          '--hover-border-color': currentBrand.cssVars['--color-accent']
+        } as React.CSSProperties}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = currentBrand.cssVars['--color-accent'] + '40'; // 25% opacity
+          setShowQuickActions(true);
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = '#f3f4f6';
+          setShowQuickActions(false);
+        }}
       >
         <Link to={`/job/${job.id}`} className="block">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-2 mb-2">
-                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-lg font-semibold text-gray-900 transition-colors"
+                    style={{
+                      color: '#111827'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = currentBrand.cssVars['--color-accent'];
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = '#111827';
+                    }}>
                   {job.title}
                 </h3>
-                <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full group-hover:bg-blue-200 transition-colors">
+                <span className="px-2 py-1 text-xs font-medium rounded-full transition-colors"
+                      style={{
+                        backgroundColor: currentBrand.cssVars['--color-accent'] + '20', // 12% opacity
+                        color: currentBrand.cssVars['--color-accent']
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-accent'] + '30'; // 18% opacity
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-accent'] + '20';
+                      }}>
                   {job.type}
                 </span>
                 {job.remote && (
-                  <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                  <span className="px-2 py-1 text-xs font-medium rounded-full"
+                        style={{
+                          backgroundColor: currentBrand.cssVars['--color-accent'] + '20',
+                          color: currentBrand.cssVars['--color-accent']
+                        }}>
                     Remote
                   </span>
                 )}
@@ -112,7 +146,8 @@ export function JobCard({ job, view }: JobCardProps) {
               </div>
               <p className="text-gray-600 text-sm line-clamp-2">{job.description}</p>
             </div>
-            <div className="flex items-center gap-2 text-green-600 font-semibold">
+            <div className="flex items-center gap-2 font-semibold"
+                 style={{ color: currentBrand.cssVars['--color-accent'] }}>
               <DollarSign className="w-5 h-5" />
               {formatSalary(job.salary.min, job.salary.max)}
             </div>
@@ -128,15 +163,41 @@ export function JobCard({ job, view }: JobCardProps) {
             className={`p-2 rounded-full transition-all duration-200 ${
               isSaved 
                 ? 'bg-red-100 text-red-600 hover:bg-red-200' 
-                : 'bg-gray-100 text-gray-600 hover:bg-blue-100 hover:text-blue-600'
+                : 'bg-gray-100 text-gray-600'
             }`}
+            style={!isSaved ? {
+              '--hover-bg': currentBrand.cssVars['--color-accent'] + '20',
+              '--hover-color': currentBrand.cssVars['--color-accent']
+            } as React.CSSProperties : {}}
+            onMouseEnter={(e) => {
+              if (!isSaved) {
+                e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-accent'] + '20';
+                e.currentTarget.style.color = currentBrand.cssVars['--color-accent'];
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isSaved) {
+                e.currentTarget.style.backgroundColor = '#f3f4f6';
+                e.currentTarget.style.color = '#4b5563';
+              }
+            }}
             title={isSaved ? 'Remove from saved' : 'Save job'}
           >
             <Heart className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
           </button>
           <Link
             to={`/job/${job.id}`}
-            className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
+            className="p-2 rounded-full transition-colors"
+            style={{
+              backgroundColor: currentBrand.cssVars['--color-accent'] + '20',
+              color: currentBrand.cssVars['--color-accent']
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-accent'] + '30';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-accent'] + '20';
+            }}
             title="View details"
             onClick={(e) => e.stopPropagation()}
           >
@@ -149,22 +210,54 @@ export function JobCard({ job, view }: JobCardProps) {
 
   return (
     <div 
-      className="group relative bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-blue-200 h-full hover-lift animate-fadeIn"
-      onMouseEnter={() => setShowQuickActions(true)}
-      onMouseLeave={() => setShowQuickActions(false)}
+      className="group relative bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 h-full hover-lift animate-fadeIn"
+      style={{
+        '--hover-border-color': currentBrand.cssVars['--color-accent']
+      } as React.CSSProperties}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = currentBrand.cssVars['--color-accent'] + '40'; // 25% opacity
+        setShowQuickActions(true);
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = '#f3f4f6';
+        setShowQuickActions(false);
+      }}
     >
       <Link to={`/job/${job.id}`} className="block h-full flex flex-col">
         <div className="mb-3 flex-1">
           <div className="flex items-start justify-between mb-2">
-            <h3 className="text-lg font-semibold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
+            <h3 className="text-lg font-semibold text-gray-900 line-clamp-1 transition-colors"
+                style={{
+                  color: '#111827'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = currentBrand.cssVars['--color-accent'];
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#111827';
+                }}>
               {job.title}
             </h3>
             <div className="flex flex-col gap-1 ml-2">
-              <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full whitespace-nowrap group-hover:bg-blue-200 transition-colors">
+              <span className="px-2 py-1 text-xs font-medium rounded-full whitespace-nowrap transition-colors"
+                    style={{
+                      backgroundColor: currentBrand.cssVars['--color-accent'] + '20', // 12% opacity
+                      color: currentBrand.cssVars['--color-accent']
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-accent'] + '30'; // 18% opacity
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-accent'] + '20';
+                    }}>
                 {job.type}
               </span>
               {job.remote && (
-                <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full whitespace-nowrap">
+                <span className="px-2 py-1 text-xs font-medium rounded-full whitespace-nowrap"
+                      style={{
+                        backgroundColor: currentBrand.cssVars['--color-accent'] + '20',
+                        color: currentBrand.cssVars['--color-accent']
+                      }}>
                   Remote
                 </span>
               )}
@@ -183,7 +276,8 @@ export function JobCard({ job, view }: JobCardProps) {
         </div>
         
         <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
-          <div className="flex items-center gap-1 text-green-600 font-semibold text-sm">
+          <div className="flex items-center gap-1 font-semibold text-sm"
+               style={{ color: currentBrand.cssVars['--color-accent'] }}>
             <DollarSign className="w-4 h-4" />
             {formatSalary(job.salary.min, job.salary.max)}
           </div>
@@ -200,8 +294,24 @@ export function JobCard({ job, view }: JobCardProps) {
           className={`p-2 rounded-full transition-all duration-200 ${
             isSaved 
               ? 'bg-red-100 text-red-600 hover:bg-red-200 animate-scaleIn' 
-              : 'bg-gray-100 text-gray-600 hover:bg-blue-100 hover:text-blue-600'
+              : 'bg-gray-100 text-gray-600'
           }`}
+          style={!isSaved ? {
+            '--hover-bg': currentBrand.cssVars['--color-accent'] + '20',
+            '--hover-color': currentBrand.cssVars['--color-accent']
+          } as React.CSSProperties : {}}
+          onMouseEnter={(e) => {
+            if (!isSaved) {
+              e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-accent'] + '20';
+              e.currentTarget.style.color = currentBrand.cssVars['--color-accent'];
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!isSaved) {
+              e.currentTarget.style.backgroundColor = '#f3f4f6';
+              e.currentTarget.style.color = '#4b5563';
+            }
+          }}
           title={isSaved ? 'Remove from saved' : 'Save job'}
         >
           <Heart className={`w-4 h-4 transition-all duration-200 ${isSaved ? 'fill-current scale-110' : ''}`} />

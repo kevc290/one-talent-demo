@@ -16,6 +16,25 @@ export interface Brand {
 
 export const brands: Brand[] = [
   {
+    id: 'kelly',
+    name: 'Kelly Services',
+    logo: '⚫',
+    colors: {
+      primary: 'gray',
+      primaryHover: 'gray-800',
+      primaryLight: 'gray-50',
+      secondary: 'slate',
+      accent: 'green',
+    },
+    cssVars: {
+      '--color-primary': '#374151',
+      '--color-primary-hover': '#1f2937',
+      '--color-primary-light': '#f9fafb',
+      '--color-secondary': '#6b7280',
+      '--color-accent': '#00ae42',
+    }
+  },
+  {
     id: 'jobsearch',
     name: 'JobSearch Pro',
     logo: '💼',
@@ -24,14 +43,14 @@ export const brands: Brand[] = [
       primaryHover: 'blue-700',
       primaryLight: 'blue-50',
       secondary: 'gray',
-      accent: 'green',
+      accent: 'blue',
     },
     cssVars: {
       '--color-primary': '#3B82F6',
       '--color-primary-hover': '#1D4ED8',
       '--color-primary-light': '#EFF6FF',
       '--color-secondary': '#6B7280',
-      '--color-accent': '#10B981',
+      '--color-accent': '#3B82F6',
     }
   },
   {
@@ -106,6 +125,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     Object.entries(currentBrand.cssVars).forEach(([property, value]) => {
       root.style.setProperty(property, value);
     });
+    
+    // Update the document title to match the current brand
+    document.title = currentBrand.name;
   }, [currentBrand]);
 
   const switchBrand = (brandId: string) => {

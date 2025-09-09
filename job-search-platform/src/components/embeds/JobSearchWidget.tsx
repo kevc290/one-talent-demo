@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Search, MapPin, Briefcase, Filter, ArrowRight, Loader, Heart, User, Settings } from 'lucide-react';
+import { Search, MapPin, Briefcase, Filter, ArrowRight, Loader, Heart } from 'lucide-react';
 import { jobsService } from '../../services/jobsService';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -9,7 +8,6 @@ import type { Job } from '../../data/jobs';
 export function JobSearchWidget() {
   const { user, isAuthenticated } = useAuth();
   const { currentBrand } = useTheme();
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [location, setLocation] = useState('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
@@ -106,49 +104,17 @@ export function JobSearchWidget() {
     <div className="bg-white rounded-xl shadow-lg max-w-2xl mx-auto overflow-hidden">
       {/* JobSearch Pro Header */}
       <div className={`px-6 py-4 border-b border-gray-200 ${
-        currentBrand.colors.primary === 'blue' ? 'bg-blue-50' : 
-        currentBrand.colors.primary === 'purple' ? 'bg-purple-50' : 'bg-emerald-50'
+        currentBrand.colors.primary === 'blue' ? 'bg-blue-600' : 
+        currentBrand.colors.primary === 'purple' ? 'bg-purple-600' : 
+        currentBrand.colors.primary === 'gray' ? 'bg-gray-700' : 'bg-emerald-600'
       }`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <span className="text-2xl">{currentBrand.logo}</span>
-            <div>
-              <h3 className={`text-lg font-bold ${
-                currentBrand.colors.primary === 'blue' ? 'text-blue-600' : 
-                currentBrand.colors.primary === 'purple' ? 'text-purple-600' : 'text-emerald-600'
-              }`}>
-                {currentBrand.name}
-              </h3>
-              <p className="text-sm text-gray-600">Powered job search widget</p>
-            </div>
-          </div>
-          
-          {/* User Profile or Login */}
-          <div className="flex items-center space-x-3">
-            {isAuthenticated && user ? (
-              <div className="flex items-center space-x-2">
-                <img
-                  src={user.avatar}
-                  alt={`${user.firstName} ${user.lastName}`}
-                  className="w-8 h-8 rounded-full"
-                />
-                <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900">{user.firstName}</p>
-                  <p className="text-xs text-gray-500">Logged in</p>
-                </div>
-              </div>
-            ) : (
-              <button
-                onClick={() => navigate('/login')}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-white transition-colors ${
-                  currentBrand.colors.primary === 'blue' ? 'bg-blue-600 hover:bg-blue-700' : 
-                  currentBrand.colors.primary === 'purple' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-emerald-600 hover:bg-emerald-700'
-                }`}
-              >
-                <User className="w-4 h-4" />
-                <span className="text-sm">Sign In</span>
-              </button>
-            )}
+        <div className="flex items-center space-x-3">
+          <span className="text-2xl">{currentBrand.logo}</span>
+          <div>
+            <h3 className="text-lg font-bold text-white">
+              {currentBrand.name}
+            </h3>
+            <p className="text-sm text-white/80">Powered job search widget</p>
           </div>
         </div>
       </div>
@@ -207,7 +173,23 @@ export function JobSearchWidget() {
             <button 
               onClick={handleSearch}
               disabled={isLoading}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 group disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-white px-6 py-2 rounded-lg transition-colors flex items-center space-x-2 group disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ 
+                backgroundColor: currentBrand.cssVars['--color-accent']
+              }}
+              onMouseEnter={(e) => {
+                const accent = currentBrand.cssVars['--color-accent'];
+                if (accent === '#00ae42') {
+                  e.currentTarget.style.backgroundColor = '#009638';
+                } else if (accent === '#10B981') {
+                  e.currentTarget.style.backgroundColor = '#047857';
+                } else {
+                  e.currentTarget.style.backgroundColor = accent;
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-accent'];
+              }}
             >
               {isLoading ? (
                 <>
@@ -267,10 +249,10 @@ export function JobSearchWidget() {
                     </div>
                     <div className="text-sm text-gray-600">
                       {job.company} • {job.location}
-                      {job.remote && <span className="text-green-600 ml-2">Remote</span>}
+                      {job.remote && <span className="ml-2" style={{ color: currentBrand.cssVars['--color-accent'] }}>Remote</span>}
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="font-medium text-green-600 text-sm">
+                      <div className="font-medium text-sm" style={{ color: currentBrand.cssVars['--color-accent'] }}>
                         ${(job.salary.min / 1000).toFixed(0)}k - ${(job.salary.max / 1000).toFixed(0)}k
                       </div>
                       <div className="text-xs text-gray-500">{job.type}</div>
@@ -285,10 +267,23 @@ export function JobSearchWidget() {
                     </button>
                     <button
                       onClick={() => handleApply(job)}
-                      className={`px-3 py-1 rounded text-sm font-medium text-white transition-colors ${
-                        currentBrand.colors.primary === 'blue' ? 'bg-blue-600 hover:bg-blue-700' : 
-                        currentBrand.colors.primary === 'purple' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-emerald-600 hover:bg-emerald-700'
-                      }`}
+                      className="px-3 py-1 rounded text-sm font-medium text-white transition-colors"
+                      style={{ 
+                        backgroundColor: currentBrand.cssVars['--color-accent']
+                      }}
+                      onMouseEnter={(e) => {
+                        const accent = currentBrand.cssVars['--color-accent'];
+                        if (accent === '#00ae42') {
+                          e.currentTarget.style.backgroundColor = '#009638';
+                        } else if (accent === '#10B981') {
+                          e.currentTarget.style.backgroundColor = '#047857';
+                        } else {
+                          e.currentTarget.style.backgroundColor = accent;
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-accent'];
+                      }}
                     >
                       Apply
                     </button>

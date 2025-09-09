@@ -10,10 +10,15 @@ export interface User {
 
 export interface UserProfile {
   phone?: string;
+  location?: string;
+  title?: string;
+  bio?: string;
   skills?: string[];
   experience?: string[];
   education?: string[];
   summary?: string;
+  linkedin?: string;
+  portfolio?: string;
   resumeFileName?: string;
   resumeUploadDate?: string;
 }

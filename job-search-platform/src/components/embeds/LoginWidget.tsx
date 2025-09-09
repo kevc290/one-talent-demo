@@ -66,19 +66,17 @@ export function LoginWidget() {
     <div className="bg-white rounded-lg shadow-lg max-w-sm mx-auto overflow-hidden">
       {/* JobSearch Pro Header */}
       <div className={`px-6 py-4 border-b border-gray-200 ${
-        currentBrand.colors.primary === 'blue' ? 'bg-blue-50' : 
-        currentBrand.colors.primary === 'purple' ? 'bg-purple-50' : 'bg-emerald-50'
+        currentBrand.colors.primary === 'blue' ? 'bg-blue-600' : 
+        currentBrand.colors.primary === 'purple' ? 'bg-purple-600' : 
+        currentBrand.colors.primary === 'gray' ? 'bg-gray-700' : 'bg-emerald-600'
       }`}>
         <div className="flex items-center justify-center space-x-3">
           <span className="text-2xl">{currentBrand.logo}</span>
           <div className="text-center">
-            <h3 className={`text-lg font-bold ${
-              currentBrand.colors.primary === 'blue' ? 'text-blue-600' : 
-              currentBrand.colors.primary === 'purple' ? 'text-purple-600' : 'text-emerald-600'
-            }`}>
+            <h3 className="text-lg font-bold text-white">
               {currentBrand.name}
             </h3>
-            <p className="text-xs text-gray-600">Authentication Widget</p>
+            <p className="text-xs text-white/80">Authentication Widget</p>
           </div>
         </div>
       </div>
@@ -184,10 +182,23 @@ export function LoginWidget() {
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full text-white py-3 rounded-lg font-medium focus:ring-2 focus:ring-offset-2 transition-all duration-200 flex items-center justify-center space-x-2 group disabled:opacity-50 disabled:cursor-not-allowed ${
-              currentBrand.colors.primary === 'blue' ? 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500' : 
-              currentBrand.colors.primary === 'purple' ? 'bg-purple-600 hover:bg-purple-700 focus:ring-purple-500' : 'bg-emerald-600 hover:bg-emerald-700 focus:ring-emerald-500'
-            }`}
+            className="w-full text-white py-3 rounded-lg font-medium focus:ring-2 focus:ring-offset-2 transition-all duration-200 flex items-center justify-center space-x-2 group disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ 
+              backgroundColor: currentBrand.cssVars['--color-accent']
+            }}
+            onMouseEnter={(e) => {
+              const accent = currentBrand.cssVars['--color-accent'];
+              if (accent === '#00ae42') {
+                e.currentTarget.style.backgroundColor = '#009638';
+              } else if (accent === '#10B981') {
+                e.currentTarget.style.backgroundColor = '#047857';
+              } else {
+                e.currentTarget.style.backgroundColor = accent;
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-accent'];
+            }}
           >
             {isLoading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
