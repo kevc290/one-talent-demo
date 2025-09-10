@@ -4,6 +4,7 @@ export interface Brand {
   id: string;
   name: string;
   logo: string;
+  fontFamily?: string;
   colors: {
     primary: string;
     primaryHover: string;
@@ -19,6 +20,7 @@ export const brands: Brand[] = [
     id: 'kelly',
     name: 'Kelly Services',
     logo: '⚫',
+    fontFamily: 'Kumbh Sans',
     colors: {
       primary: 'gray',
       primaryHover: 'gray-800',
@@ -32,6 +34,7 @@ export const brands: Brand[] = [
       '--color-primary-light': '#f9fafb',
       '--color-secondary': '#6b7280',
       '--color-accent': '#00ae42',
+      '--font-family': '"Kumbh Sans", sans-serif',
     }
   },
   {

@@ -190,22 +190,60 @@
   }
 
   // Create job listing HTML
-  function createJobHTML(job) {
+  function createJobHTML(job, theme = 'modern') {
+    const colors = getThemeColors(theme);
     return `
       <div style="background: #f9fafb; border-radius: 8px; padding: 16px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='#f9fafb'" onclick="window.location.href='${WIDGET_BASE_URL}/job/${job.id}'">
         <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">${job.title}</div>
         <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">${job.company} • ${job.location}${job.remote ? ' • Remote' : ''}</div>
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span style="font-weight: 600; color: #059669;">$${Math.floor(job.salary.min/1000)}k - $${Math.floor(job.salary.max/1000)}k</span>
-          <button style="background: #3b82f6; color: white; padding: 6px 12px; border: none; border-radius: 6px; font-size: 12px; cursor: pointer;" onclick="event.stopPropagation(); window.location.href='${WIDGET_BASE_URL}/job/${job.id}'">Apply</button>
+          <span style="font-weight: 600; color: ${colors.primary};">$${Math.floor(job.salary.min/1000)}k - $${Math.floor(job.salary.max/1000)}k</span>
+          <button style="background: ${colors.primary}; color: white; padding: 6px 12px; border: none; border-radius: 6px; font-size: 12px; cursor: pointer;" onclick="event.stopPropagation(); window.location.href='${WIDGET_BASE_URL}/job/${job.id}'" onmouseover="this.style.backgroundColor='${colors.primaryHover}'" onmouseout="this.style.backgroundColor='${colors.primary}'">Apply</button>
         </div>
       </div>
     `;
   }
 
+  // Get theme colors
+  function getThemeColors(theme) {
+    const themes = {
+      kelly: {
+        primary: '#00ae42',
+        primaryHover: '#009638',
+        primaryLight: '#10B981'
+      },
+      jobsearch: {
+        primary: '#3B82F6',
+        primaryHover: '#1D4ED8',
+        primaryLight: '#3B82F6'
+      },
+      careerhub: {
+        primary: '#8B5CF6',
+        primaryHover: '#7C3AED',
+        primaryLight: '#EC4899'
+      },
+      talentfinder: {
+        primary: '#10B981',
+        primaryHover: '#047857',
+        primaryLight: '#F97316'
+      },
+      modern: {
+        primary: '#3b82f6',
+        primaryHover: '#2563eb',
+        primaryLight: '#3b82f6'
+      }
+    };
+    
+    return themes[theme] || themes.modern;
+  }
+
   // Handle job search
   function handleJobSearch(widgetId) {
     const widget = document.getElementById(widgetId);
+    const widgetContainer = widget.closest('[data-jobsearch-widget]');
+    const theme = widgetContainer ? widgetContainer.getAttribute('data-theme') || 'modern' : 'modern';
+    const colors = getThemeColors(theme);
+    
     const searchInput = widget.querySelector('input[placeholder*="Job title"]');
     const locationInput = widget.querySelector('input[placeholder*="City"]');
     const resultsContainer = widget.querySelector('[data-results]');
@@ -233,14 +271,14 @@
           </div>
         `;
       } else {
-        const jobsHTML = filteredJobs.map(createJobHTML).join('');
+        const jobsHTML = filteredJobs.map(job => createJobHTML(job, theme)).join('');
         resultsContainer.innerHTML = `
           <h4 style="font-size: 16px; font-weight: 600; color: #1f2937; margin-bottom: 12px;">Search Results (${filteredJobs.length})</h4>
           ${jobsHTML}
           <button type="button" onclick="window.location.href='${WIDGET_BASE_URL}/jobs'"
-            style="width: 100%; margin-top: 16px; background: transparent; color: #3b82f6; padding: 8px 16px; border: 1px solid #3b82f6; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
-            onmouseover="this.style.backgroundColor='#3b82f6'; this.style.color='white'"
-            onmouseout="this.style.backgroundColor='transparent'; this.style.color='#3b82f6'">
+            style="width: 100%; margin-top: 16px; background: transparent; color: ${colors.primary}; padding: 8px 16px; border: 1px solid ${colors.primary}; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
+            onmouseover="this.style.backgroundColor='${colors.primary}'; this.style.color='white'"
+            onmouseout="this.style.backgroundColor='transparent'; this.style.color='${colors.primary}'">
             View All Jobs →
           </button>
         `;
@@ -310,6 +348,10 @@
   // Initialize profile widget with user data
   function initializeProfileWidget(widgetId) {
     const widget = document.getElementById(widgetId);
+    const widgetContainer = widget.closest('[data-jobsearch-widget]');
+    const theme = widgetContainer ? widgetContainer.getAttribute('data-theme') || 'modern' : 'modern';
+    const colors = getThemeColors(theme);
+    
     const userInfoContainer = widget.querySelector('[data-user-info]');
     const menuItemsContainer = widget.querySelector('[data-menu-items]');
     const profileContainer = widget.querySelector('[data-profile-container]');
@@ -325,7 +367,7 @@
         profileContainer.innerHTML = `
           <div style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: white; border: 1px solid #d1d5db; border-radius: 8px; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" 
                onclick="window.JobSearchWidgets.toggleProfile('${widgetId}')"
-               onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'"
+               onmouseover="this.style.borderColor='${colors.primary}'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'"
                onmouseout="this.style.borderColor='#d1d5db'; this.style.boxShadow='0 1px 2px rgba(0,0,0,0.05)'">
             <img src="${user.avatar}" alt="${user.firstName} ${user.lastName}" 
                  style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
@@ -416,6 +458,7 @@
   // Create static widget content (now fully functional)
   function createStaticWidget(widgetType, theme) {
     const widgetId = 'widget-' + Math.random().toString(36).substr(2, 9);
+    const colors = getThemeColors(theme);
     
     const widgets = {
       search: `
@@ -429,7 +472,7 @@
             <div style="position: relative; margin-bottom: 16px;">
               <input type="text" placeholder="Job title, keywords, or company" 
                 style="width: 100%; padding: 12px 16px 12px 44px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s; box-sizing: border-box;"
-                onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'"
+                onfocus="this.style.borderColor='${colors.primary}'; this.style.boxShadow='0 0 0 3px ${colors.primary}20'"
                 onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                 onkeypress="if(event.key==='Enter') window.JobSearchWidgets.handleSearch('${widgetId}')">
               <svg style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: #9ca3af; pointer-events: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -440,7 +483,7 @@
             <div style="position: relative; margin-bottom: 16px;">
               <input type="text" placeholder="City, state, or remote"
                 style="width: 100%; padding: 12px 16px 12px 44px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s; box-sizing: border-box;"
-                onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'"
+                onfocus="this.style.borderColor='${colors.primary}'; this.style.boxShadow='0 0 0 3px ${colors.primary}20'"
                 onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                 onkeypress="if(event.key==='Enter') window.JobSearchWidgets.handleSearch('${widgetId}')">
               <svg style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: #9ca3af; pointer-events: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -450,16 +493,16 @@
             </div>
             
             <button type="button" onclick="window.JobSearchWidgets.handleSearch('${widgetId}')"
-              style="width: 100%; background: #3b82f6; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
-              onmouseover="this.style.backgroundColor='#2563eb'"
-              onmouseout="this.style.backgroundColor='#3b82f6'">
+              style="width: 100%; background: ${colors.primary}; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
+              onmouseover="this.style.backgroundColor='${colors.primaryHover}'"
+              onmouseout="this.style.backgroundColor='${colors.primary}'">
               Search Jobs →
             </button>
           </div>
           
           <div style="margin-top: 24px;" data-results>
             <h4 style="font-size: 16px; font-weight: 600; color: #1f2937; margin-bottom: 12px;">Featured Jobs</h4>
-            ${mockJobs.slice(0, 2).map(createJobHTML).join('')}
+            ${mockJobs.slice(0, 2).map(job => createJobHTML(job, theme)).join('')}
           </div>
         </div>
       `,
@@ -473,17 +516,17 @@
           </h3>
           <div style="space-y: 12px;">
             ${mockJobs.slice(0, 3).map(job => `
-              <div style="padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; transition: all 0.2s; cursor: pointer;" onmouseover="this.style.borderColor='#3b82f6'; this.style.backgroundColor='#f8fafc'" onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='transparent'" onclick="window.location.href='${WIDGET_BASE_URL}/job/${job.id}'">
+              <div style="padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; transition: all 0.2s; cursor: pointer;" onmouseover="this.style.borderColor='${colors.primary}'; this.style.backgroundColor='#f8fafc'" onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='transparent'" onclick="window.location.href='${WIDGET_BASE_URL}/job/${job.id}'">
                 <div style="font-weight: 600; color: #1f2937; font-size: 14px; margin-bottom: 4px;">${job.title}</div>
                 <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">${job.company}</div>
-                <div style="font-size: 12px; color: #059669; font-weight: 600;">$${Math.floor(job.salary.min/1000)}k - $${Math.floor(job.salary.max/1000)}k</div>
+                <div style="font-size: 12px; color: ${colors.primary}; font-weight: 600;">$${Math.floor(job.salary.min/1000)}k - $${Math.floor(job.salary.max/1000)}k</div>
               </div>
             `).join('')}
           </div>
           <button type="button" onclick="window.location.href='${WIDGET_BASE_URL}/jobs'"
-            style="width: 100%; margin-top: 16px; background: transparent; color: #3b82f6; padding: 8px 16px; border: 1px solid #3b82f6; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
-            onmouseover="this.style.backgroundColor='#3b82f6'; this.style.color='white'"
-            onmouseout="this.style.backgroundColor='transparent'; this.style.color='#3b82f6'">
+            style="width: 100%; margin-top: 16px; background: transparent; color: ${colors.primary}; padding: 8px 16px; border: 1px solid ${colors.primary}; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
+            onmouseover="this.style.backgroundColor='${colors.primary}'; this.style.color='white'"
+            onmouseout="this.style.backgroundColor='transparent'; this.style.color='${colors.primary}'">
             View All Jobs →
           </button>
         </div>
@@ -500,7 +543,7 @@
               <label style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">Email</label>
               <input type="email" placeholder="Enter your email" required
                 style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s; box-sizing: border-box;"
-                onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'"
+                onfocus="this.style.borderColor='${colors.primary}'; this.style.boxShadow='0 0 0 3px ${colors.primary}20'"
                 onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
             </div>
             
@@ -508,20 +551,20 @@
               <label style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">Password</label>
               <input type="password" placeholder="Enter your password" required
                 style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s; box-sizing: border-box;"
-                onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'"
+                onfocus="this.style.borderColor='${colors.primary}'; this.style.boxShadow='0 0 0 3px ${colors.primary}20'"
                 onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
             </div>
             
             <button type="submit"
-              style="width: 100%; background: #3b82f6; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 16px;"
-              onmouseover="this.style.backgroundColor='#2563eb'"
-              onmouseout="this.style.backgroundColor='#3b82f6'">
+              style="width: 100%; background: ${colors.primary}; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 16px;"
+              onmouseover="this.style.backgroundColor='${colors.primaryHover}'"
+              onmouseout="this.style.backgroundColor='${colors.primary}'">
               Sign In
             </button>
             
             <div style="text-align: center;">
               <a href="#" onclick="event.preventDefault(); window.location.href='${WIDGET_BASE_URL}/register'" 
-                 style="color: #3b82f6; text-decoration: none; font-size: 14px;"
+                 style="color: ${colors.primary}; text-decoration: none; font-size: 14px;"
                  onmouseover="this.style.textDecoration='underline'"
                  onmouseout="this.style.textDecoration='none'">
                 Don't have an account? Sign up
@@ -536,7 +579,7 @@
             <!-- Profile widget content will be inserted here -->
             <div style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: white; border: 1px solid #d1d5db; border-radius: 8px; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" 
                  onclick="window.JobSearchWidgets.toggleProfile('${widgetId}')"
-                 onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'"
+                 onmouseover="this.style.borderColor='${colors.primary}'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'"
                  onmouseout="this.style.borderColor='#d1d5db'; this.style.boxShadow='0 1px 2px rgba(0,0,0,0.05)'">
               <div style="width: 32px; height: 32px; border-radius: 50%; background: #f3f4f6; display: flex; align-items: center; justify-content: center;">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #6b7280;">
@@ -557,9 +600,9 @@
               <div style="text-align: center; color: #6b7280; font-size: 14px;">
                 <p>Sign in to access your profile</p>
                 <button onclick="window.location.href='${WIDGET_BASE_URL}/login'"
-                        style="margin-top: 8px; background: #3b82f6; color: white; padding: 8px 16px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; transition: all 0.2s;"
-                        onmouseover="this.style.backgroundColor='#2563eb'"
-                        onmouseout="this.style.backgroundColor='#3b82f6'">
+                        style="margin-top: 8px; background: ${colors.primary}; color: white; padding: 8px 16px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; transition: all 0.2s;"
+                        onmouseover="this.style.backgroundColor='${colors.primaryHover}'"
+                        onmouseout="this.style.backgroundColor='${colors.primary}'">
                   Sign In
                 </button>
               </div>

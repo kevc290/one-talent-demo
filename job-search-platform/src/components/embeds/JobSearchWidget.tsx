@@ -101,7 +101,7 @@ export function JobSearchWidget() {
 
 
   return (
-    <div className="bg-white rounded-xl shadow-lg max-w-2xl mx-auto overflow-hidden">
+    <div className="bg-white rounded-xl shadow-lg max-w-4xl mx-auto overflow-hidden">
       {/* JobSearch Pro Header */}
       <div className={`px-6 py-4 border-b border-gray-200 ${
         currentBrand.colors.primary === 'blue' ? 'bg-blue-600' : 
@@ -243,7 +243,7 @@ export function JobSearchWidget() {
                   key={job.id}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors group"
                 >
-                  <div className="flex-1 space-y-1">
+                  <div className="flex-1 space-y-1 text-left">
                     <div className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
                       {job.title}
                     </div>
@@ -251,11 +251,11 @@ export function JobSearchWidget() {
                       {job.company} • {job.location}
                       {job.remote && <span className="ml-2" style={{ color: currentBrand.cssVars['--color-accent'] }}>Remote</span>}
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium text-sm" style={{ color: currentBrand.cssVars['--color-accent'] }}>
+                    <div className="text-sm">
+                      <span className="font-medium" style={{ color: currentBrand.cssVars['--color-accent'] }}>
                         ${(job.salary.min / 1000).toFixed(0)}k - ${(job.salary.max / 1000).toFixed(0)}k
-                      </div>
-                      <div className="text-xs text-gray-500">{job.type}</div>
+                      </span>
+                      <span className="text-gray-500 ml-3">{job.type}</span>
                     </div>
                   </div>
                   <div className="ml-4 flex space-x-2">

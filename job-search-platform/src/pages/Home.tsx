@@ -1,15 +1,71 @@
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 import { ArrowRight, Search, Filter, Users } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useTheme } from '../contexts/ThemeContext';
-import { JobSearchWidget } from '../components/embeds/JobSearchWidget';
-import { MiniJobListings } from '../components/embeds/MiniJobListings';
+
+// Declare the global JobSearchWidgets interface
+declare global {
+  interface Window {
+    JobSearchWidgets?: {
+      init: () => void;
+      handleSearch: (widgetId: string) => void;
+      handleLogin: (widgetId: string) => void;
+      toggleProfile: (widgetId: string) => void;
+      handleLogout: (widgetId: string) => void;
+      version: string;
+    };
+  }
+}
 
 export function Home() {
   const { currentBrand } = useTheme();
   const breadcrumbItems = [
     { label: 'Home' }
   ];
+
+  // Load embed script for job search widgets and reinitialize on brand change
+  useEffect(() => {
+    // Clear existing widget content to force recreation with new theme
+    const clearWidgets = () => {
+      const widgets = document.querySelectorAll('[data-jobsearch-widget]');
+      widgets.forEach(widget => {
+        // Clear the widget content and reset attributes
+        widget.innerHTML = '';
+        widget.removeAttribute('data-widget-id');
+        widget.removeAttribute('data-widget-type');
+      });
+    };
+
+    // First time loading: add the script
+    if (!window.JobSearchWidgets) {
+      const script = document.createElement('script');
+      script.src = import.meta.env.PROD ? '/one-talent-demo/embed.js' : '/embed.js';
+      script.async = true;
+      
+      script.onload = () => {
+        if (window.JobSearchWidgets && window.JobSearchWidgets.init) {
+          setTimeout(() => {
+            window.JobSearchWidgets.init();
+          }, 100);
+        }
+      };
+      
+      document.body.appendChild(script);
+    } else {
+      // Script already loaded, just clear and reinitialize widgets
+      clearWidgets();
+      setTimeout(() => {
+        if (window.JobSearchWidgets && window.JobSearchWidgets.init) {
+          window.JobSearchWidgets.init();
+        }
+      }, 100);
+    }
+
+    return () => {
+      // Don't remove the script on cleanup as it might be needed again
+    };
+  }, [currentBrand]); // Re-run when brand changes
 
   return (
     <div className={`min-h-screen bg-gradient-to-br to-white ${
@@ -22,95 +78,114 @@ export function Home() {
       </div>
       
       {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16">
-        <div className="text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Find Your <span className={`${
-              currentBrand.colors.primary === 'blue' ? 'text-blue-600' : 
-              currentBrand.colors.primary === 'purple' ? 'text-purple-600' : 'text-emerald-600'
-            }`}>Perfect Job</span>
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Discover opportunities across software, healthcare, and manufacturing industries. 
-            Your dream career is just a click away.
-          </p>
-          <div className="mb-12">
-            <Link
-              to="/jobs"
-              className={`inline-flex items-center gap-2 px-8 py-4 text-white font-semibold rounded-lg transition-colors shadow-lg ${
-                currentBrand.colors.primary === 'blue' ? 'bg-blue-600 hover:bg-blue-700' : 
-                currentBrand.colors.primary === 'purple' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-emerald-600 hover:bg-emerald-700'
-              }`}
-            >
-              Start Your Job Search
-              <ArrowRight className="w-5 h-5" />
-            </Link>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-0">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center min-h-[350px]">
+          {/* Left Column - Content */}
+          <div className="text-left lg:col-span-1 col-span-full">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+              Connecting People to <span className={`inline-block px-4 py-2 rounded-lg text-white ${
+                currentBrand.colors.primary === 'blue' ? 'bg-blue-600' : 
+                currentBrand.colors.primary === 'purple' ? 'bg-purple-600' : 'bg-emerald-600'
+              }`}>Limitless</span> Opportunities
+            </h1>
+            <p className="text-lg text-gray-600 mb-8 max-w-lg">
+              Work with the industry leader who's breaking down barriers and helping job seekers worldwide connect with meaningful, transformative work.
+            </p>
+            
           </div>
-          
-          {/* Embedded Job Search Components */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="flex justify-center">
-              <JobSearchWidget />
-            </div>
-            <div className="flex justify-center">
-              <MiniJobListings />
+
+          {/* Right Column - Image (Hidden on mobile/tablet) */}
+          <div className="self-end justify-center lg:justify-end hidden lg:flex">
+            <div className="relative">
+              <img
+                src={import.meta.env.PROD ? "/one-talent-demo/images/woman_phone.png" : "/images/woman_phone.png"}
+                alt="Professional woman with phone"
+                className="w-full max-w-sm h-auto object-contain max-h-[450px] "
+              />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Features Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-          Why Choose {currentBrand.name}?
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="text-center">
-            <div className={`w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4 ${
-              currentBrand.colors.primary === 'blue' ? 'bg-blue-100' : 
-              currentBrand.colors.primary === 'purple' ? 'bg-purple-100' : 'bg-emerald-100'
-            }`}>
-              <Search className={`w-8 h-8 ${
-                currentBrand.colors.primary === 'blue' ? 'text-blue-600' : 
-                currentBrand.colors.primary === 'purple' ? 'text-purple-600' : 'text-emerald-600'
-              }`} />
+      {/* Featured Content Section */}
+      <div className="bg-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Press Release */}
+            <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+              <div className="mb-4">
+                <span className={`inline-block px-3 py-1 rounded text-xs font-semibold text-white ${
+                  currentBrand.colors.primary === 'blue' ? 'bg-blue-600' : 
+                  currentBrand.colors.primary === 'purple' ? 'bg-purple-600' : 'bg-emerald-600'
+                }`}>
+                  PRESS RELEASE
+                </span>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4 leading-tight">
+                Everest Group Names Kelly a Leader and Star Performer in Professional, Industrial, IT and Engineering Staffing
+              </h3>
+              <a href="#" className="text-gray-900 font-medium underline hover:text-blue-600 transition-colors">
+                Read more →
+              </a>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Smart Search</h3>
-            <p className="text-gray-600">
-              Find the perfect job with our intelligent search system that matches your skills and preferences
+
+            {/* Sustainability */}
+            <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+              <div className="mb-4">
+                <span className={`inline-block px-3 py-1 rounded text-xs font-semibold text-white ${
+                  currentBrand.colors.primary === 'blue' ? 'bg-blue-600' : 
+                  currentBrand.colors.primary === 'purple' ? 'bg-purple-600' : 'bg-emerald-600'
+                }`}>
+                  SUSTAINABILITY
+                </span>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4 leading-tight">
+                Discover how Kelly works to ensure a sustainable future for all.
+              </h3>
+              <a href="#" className="text-gray-900 font-medium underline hover:text-blue-600 transition-colors">
+                Read the report →
+              </a>
+            </div>
+
+            {/* Insights */}
+            <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+              <div className="mb-4">
+                <span className={`inline-block px-3 py-1 rounded text-xs font-semibold text-white ${
+                  currentBrand.colors.primary === 'blue' ? 'bg-blue-600' : 
+                  currentBrand.colors.primary === 'purple' ? 'bg-purple-600' : 'bg-emerald-600'
+                }`}>
+                  INSIGHTS
+                </span>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4 leading-tight">
+                The Dishonest Job Search: 2,000+ voices reveal what's really happening in hiring
+              </h3>
+              <a href="#" className="text-gray-900 font-medium underline hover:text-blue-600 transition-colors">
+                Read article →
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Latest Job Opportunities Section */}
+      <div className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Latest Job Opportunities</h2>
+            <p className="text-lg text-gray-600">
+              Explore the newest job openings tailored to your skills and career aspirations.
             </p>
           </div>
           
-          <div className="text-center">
-            <div className={`w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4 ${
-              currentBrand.colors.primary === 'blue' ? 'bg-blue-100' : 
-              currentBrand.colors.primary === 'purple' ? 'bg-purple-100' : 'bg-emerald-100'
-            }`}>
-              <Filter className={`w-8 h-8 ${
-                currentBrand.colors.primary === 'blue' ? 'text-blue-600' : 
-                currentBrand.colors.primary === 'purple' ? 'text-purple-600' : 'text-emerald-600'
-              }`} />
+          {/* Embedded Job Search Widgets */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            <div className="flex justify-center">
+              <div data-jobsearch-widget="search" data-theme={currentBrand.id}></div>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Advanced Filters</h3>
-            <p className="text-gray-600">
-              Filter by location, salary, job type, and industry to find exactly what you're looking for
-            </p>
-          </div>
-          
-          <div className="text-center">
-            <div className={`w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4 ${
-              currentBrand.colors.primary === 'blue' ? 'bg-blue-100' : 
-              currentBrand.colors.primary === 'purple' ? 'bg-purple-100' : 'bg-emerald-100'
-            }`}>
-              <Users className={`w-8 h-8 ${
-                currentBrand.colors.primary === 'blue' ? 'text-blue-600' : 
-                currentBrand.colors.primary === 'purple' ? 'text-purple-600' : 'text-emerald-600'
-              }`} />
+            <div className="flex justify-center">
+              <div data-jobsearch-widget="listings" data-theme={currentBrand.id}></div>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Top Companies</h3>
-            <p className="text-gray-600">
-              Connect with leading companies across multiple industries hiring right now
-            </p>
           </div>
         </div>
       </div>

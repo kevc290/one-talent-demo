@@ -4,6 +4,7 @@ import { Menu, X, Briefcase, Home, Users, Building2, User, Settings, LogOut, Hea
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { BrandSwitcher } from './BrandSwitcher';
+import { HeaderSearch } from './embeds/SearchWidget';
 
 export function Navigation() {
   // All hooks MUST be called before any conditional returns
@@ -73,115 +74,132 @@ export function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2">
-            <span className="text-2xl">{currentBrand.logo}</span>
-            <span className="text-xl font-bold" style={{ color: currentBrand.cssVars['--color-primary'] }}>
-              {currentBrand.name}
-            </span>
+            {currentBrand.id === 'kelly' ? (
+              <img
+                src={import.meta.env.PROD ? "/one-talent-demo/images/kelly_logo.png" : "/images/kelly_logo.png"}
+                alt="Kelly Services"
+                className="h-8 w-auto object-contain"
+              />
+            ) : (
+              <>
+                <span className="text-2xl">{currentBrand.logo}</span>
+                <span className="text-xl font-bold" style={{ color: currentBrand.cssVars['--color-primary'] }}>
+                  {currentBrand.name}
+                </span>
+              </>
+            )}
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
-            <BrandSwitcher />
-            
-            {navLinks.map(({ to, label }) => (
-              <Link
-                key={to}
-                to={to}
-                className="font-medium transition-colors text-gray-600"
-                style={isActive(to) ? 
-                  { color: currentBrand.cssVars['--color-accent'] } : 
-                  { '--hover-color': currentBrand.cssVars['--color-accent'] } as React.CSSProperties
-                }
-                onMouseEnter={(e) => {
-                  if (!isActive(to)) {
-                    e.currentTarget.style.color = currentBrand.cssVars['--color-accent'];
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive(to)) {
-                    e.currentTarget.style.color = '#4b5563';
-                  }
-                }}
-              >
-                {label}
-              </Link>
-            ))}
-
-            {/* Auth Section */}
-            {isAuthenticated && user ? (
-              <div className="relative" ref={userMenuRef}>
-                <button
-                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <img
-                    src={user.avatar}
-                    alt={`${user.firstName} ${user.lastName}`}
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                  <span className="text-gray-700 font-medium">{user.firstName}</span>
-                </button>
-
-                {/* User Dropdown Menu */}
-                {isUserMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
-                    <div className="px-4 py-3 border-b border-gray-200">
-                      <p className="text-sm font-medium text-gray-900">{user.firstName} {user.lastName}</p>
-                      <p className="text-sm text-gray-600">{user.email}</p>
-                    </div>
-                    
-                    <div className="py-2">
-                      {userMenuLinks.map(({ to, label, icon: Icon }) => (
-                        <Link
-                          key={to}
-                          to={to}
-                          onClick={() => setIsUserMenuOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
-                        >
-                          <Icon className="w-4 h-4" />
-                          {label}
-                        </Link>
-                      ))}
-                    </div>
-                    
-                    <div className="border-t border-gray-200 pt-2">
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-3 w-full px-4 py-2 text-red-600 hover:bg-red-50 transition-colors"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        Sign Out
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="flex items-center gap-4">
+          {/* Desktop Navigation - Centered */}
+          <div className="hidden md:flex items-center justify-center flex-1">
+            <div className="flex items-center gap-6">
+              <BrandSwitcher />
+              
+              {navLinks.map(({ to, label }) => (
                 <Link
-                  to="/login"
-                  className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to="/register"
-                  className="text-white px-4 py-2 rounded-lg transition-colors font-medium"
-                  style={{
-                    backgroundColor: currentBrand.cssVars['--color-primary'],
-                    '--hover-bg': currentBrand.cssVars['--color-primary-hover']
-                  } as React.CSSProperties}
+                  key={to}
+                  to={to}
+                  className="font-medium transition-colors text-gray-600"
+                  style={isActive(to) ? 
+                    { color: currentBrand.cssVars['--color-accent'] } : 
+                    { '--hover-color': currentBrand.cssVars['--color-accent'] } as React.CSSProperties
+                  }
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-primary-hover'];
+                    if (!isActive(to)) {
+                      e.currentTarget.style.color = currentBrand.cssVars['--color-accent'];
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-primary'];
+                    if (!isActive(to)) {
+                      e.currentTarget.style.color = '#4b5563';
+                    }
                   }}
                 >
-                  Get Started
+                  {label}
                 </Link>
-              </div>
-            )}
+              ))}
+
+              {/* Auth Section - Centered */}
+              {isAuthenticated && user ? (
+                <div className="relative" ref={userMenuRef}>
+                  <button
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
+                    <img
+                      src={user.avatar}
+                      alt={`${user.firstName} ${user.lastName}`}
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                    <span className="text-gray-700 font-medium">{user.firstName}</span>
+                  </button>
+
+                  {/* User Dropdown Menu */}
+                  {isUserMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
+                      <div className="px-4 py-3 border-b border-gray-200">
+                        <p className="text-sm font-medium text-gray-900">{user.firstName} {user.lastName}</p>
+                        <p className="text-sm text-gray-600">{user.email}</p>
+                      </div>
+                      
+                      <div className="py-2">
+                        {userMenuLinks.map(({ to, label, icon: Icon }) => (
+                          <Link
+                            key={to}
+                            to={to}
+                            onClick={() => setIsUserMenuOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
+                          >
+                            <Icon className="w-4 h-4" />
+                            {label}
+                          </Link>
+                        ))}
+                      </div>
+                      
+                      <div className="border-t border-gray-200 pt-2">
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center gap-3 w-full px-4 py-2 text-red-600 hover:bg-red-50 transition-colors"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center gap-4">
+                  <Link
+                    to="/login"
+                    className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="text-white px-4 py-2 rounded-lg transition-colors font-medium"
+                    style={{
+                      backgroundColor: currentBrand.cssVars['--color-primary'],
+                      '--hover-bg': currentBrand.cssVars['--color-primary-hover']
+                    } as React.CSSProperties}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-primary-hover'];
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = currentBrand.cssVars['--color-primary'];
+                    }}
+                  >
+                    Get Started
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Search Bar - Right Side */}
+          <div className="hidden md:block">
+            <HeaderSearch />
           </div>
 
           {/* Mobile Menu Button */}

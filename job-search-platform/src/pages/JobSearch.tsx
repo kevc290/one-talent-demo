@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Grid3x3, List, Loader, Filter } from 'lucide-react';
 import { SearchBar } from '../components/SearchBar';
 import { FilterButton } from '../components/FilterButton';
@@ -12,8 +13,14 @@ import { useTheme } from '../contexts/ThemeContext';
 
 export function JobSearch() {
   const { currentBrand } = useTheme();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Initialize state from URL parameters
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
+  const [activeFilters, setActiveFilters] = useState<string[]>(() => {
+    const tagsParam = searchParams.get('tags');
+    return tagsParam ? tagsParam.split(',').filter(Boolean) : [];
+  });
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [isLoading, setIsLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
@@ -48,6 +55,20 @@ export function JobSearch() {
   useEffect(() => {
     loadJobs();
   }, []);
+
+  // Update URL when search term or filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchTerm.trim()) {
+      params.set('search', searchTerm.trim());
+    }
+    if (activeFilters.length > 0) {
+      params.set('tags', activeFilters.join(','));
+    }
+    
+    // Update URL without triggering navigation
+    setSearchParams(params, { replace: true });
+  }, [searchTerm, activeFilters, setSearchParams]);
 
   useEffect(() => {
     const delayedSearch = setTimeout(() => {

@@ -2,6 +2,7 @@ import { apiClient, isDemoMode } from './api';
 import type { ApiResponse, PaginatedResponse } from './api';
 import type { Job } from '../data/jobs';
 import { jobs } from '../data/jobs';
+import { FuzzySearch } from '../utils/fuzzySearch';
 
 export interface JobFilters {
   search?: string;
@@ -30,14 +31,16 @@ export const jobsService = {
       // Return mock data in demo mode
       let filteredJobs = [...jobs];
       
-      // Apply search filter
+      // Apply fuzzy search filter
       if (params?.search) {
-        const search = params.search.toLowerCase();
+        const searchTerm = params.search.trim();
         filteredJobs = filteredJobs.filter(job => 
-          job.title.toLowerCase().includes(search) ||
-          job.company.toLowerCase().includes(search) ||
-          job.location.toLowerCase().includes(search) ||
-          job.description.toLowerCase().includes(search)
+          FuzzySearch.enhancedMatch(job.title, searchTerm) ||
+          FuzzySearch.enhancedMatch(job.company, searchTerm) ||
+          FuzzySearch.enhancedMatch(job.location, searchTerm) ||
+          FuzzySearch.enhancedMatch(job.description, searchTerm) ||
+          FuzzySearch.enhancedMatch(job.department, searchTerm) ||
+          FuzzySearch.enhancedMatch(job.requirements?.join(' ') || '', searchTerm)
         );
       }
       

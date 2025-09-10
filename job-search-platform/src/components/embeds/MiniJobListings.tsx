@@ -13,6 +13,15 @@ export function MiniJobListings() {
     .sort((a, b) => new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime())
     .slice(0, 5);
 
+  // Function to get company initials
+  const getCompanyInitials = (companyName: string) => {
+    return companyName
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase())
+      .join('')
+      .substring(0, 2); // Limit to 2 characters
+  };
+
   const toggleSaveJob = (jobId: string) => {
     setSavedJobs(prev => 
       prev.includes(jobId)
@@ -22,7 +31,7 @@ export function MiniJobListings() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg max-w-sm mx-auto overflow-hidden">
+    <div className="bg-white rounded-lg shadow-lg max-w-lg mx-auto overflow-hidden">
       {/* JobSearch Pro Header */}
       <div className={`px-4 py-3 border-b border-gray-200 ${
         currentBrand.colors.primary === 'blue' ? 'bg-blue-600' : 
@@ -67,11 +76,12 @@ export function MiniJobListings() {
               {/* Job Header */}
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center space-x-3 flex-1">
-                  <img
-                    src={job.companyLogo}
-                    alt={`${job.company} logo`}
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-semibold text-white"
+                    style={{ backgroundColor: currentBrand.cssVars['--color-accent'] }}
+                  >
+                    {getCompanyInitials(job.company)}
+                  </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="font-medium text-gray-900 text-sm transition-colors truncate"
                         onMouseEnter={(e) => {
