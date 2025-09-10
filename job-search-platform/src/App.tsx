@@ -12,6 +12,7 @@ import { Dashboard } from './pages/Dashboard';
 import { SavedJobs } from './pages/SavedJobs';
 import { Admin } from './pages/Admin';
 import { EditProfile } from './pages/EditProfile';
+import { About } from './pages/About';
 import { SearchWidget } from './pages/widgets/SearchWidget';
 import { ListingsWidget } from './pages/widgets/ListingsWidget';
 import { LoginWidget } from './pages/widgets/LoginWidget';
@@ -46,16 +47,12 @@ function App() {
             } />
             
             {/* Placeholder Routes */}
-            <Route path="/companies" element={
+            {/* <Route path="/companies" element={
               <div className="min-h-screen flex items-center justify-center">
                 <p className="text-gray-500">Companies page coming soon...</p>
               </div>
-            } />
-            <Route path="/about" element={
-              <div className="min-h-screen flex items-center justify-center">
-                <p className="text-gray-500">About page coming soon...</p>
-              </div>
-            } />
+            } /> */}
+            <Route path="/about" element={<About />} />
             <Route path="/saved-jobs" element={
               <ProtectedRoute>
                 <SavedJobs />

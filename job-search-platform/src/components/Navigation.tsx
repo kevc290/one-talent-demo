@@ -31,7 +31,7 @@ export function Navigation() {
     const baseLinks = [
       { to: '/', label: 'Home', icon: Home },
       { to: '/jobs', label: 'Find Jobs', icon: Briefcase },
-      { to: '/companies', label: 'Companies', icon: Building2 },
+      // { to: '/companies', label: 'Companies', icon: Building2 },
       { to: '/about', label: 'About', icon: Users },
     ];
     
