@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Briefcase, Home, Users, Building2, User, Settings, LogOut, Heart, FileText, Shield } from 'lucide-react';
+import { Menu, X, Briefcase, Home, Users, Building2, User, Settings, LogOut, Heart, FileText, Shield, Edit } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { BrandSwitcher } from './BrandSwitcher';
@@ -42,8 +42,8 @@ export function Navigation() {
         ...baseLinks.slice(2), // Companies and About
       ];
       
-      // Add admin link for demo purposes (john.doe has admin access)
-      if (user?.email === 'john.doe@example.com') {
+      // Add admin link for demo purposes (demo user has admin access)
+      if (user?.email === 'demo@jobsearchpro.com' || user?.email === 'john.doe@example.com') {
         authenticatedLinks.splice(-1, 0, { to: '/admin', label: 'Admin', icon: Shield });
       }
       
@@ -55,12 +55,23 @@ export function Navigation() {
 
   const navLinks = getNavLinks();
 
-  const userMenuLinks = [
-    { to: '/dashboard', label: 'Dashboard', icon: Home },
-    { to: '/saved-jobs', label: 'Saved Jobs', icon: Heart },
-    { to: '/applications', label: 'My Applications', icon: FileText },
-    { to: '/profile', label: 'Profile Settings', icon: Settings },
-  ];
+  const getUserMenuLinks = () => {
+    const baseLinks = [
+      { to: '/dashboard', label: 'Dashboard', icon: Home },
+      { to: '/saved-jobs', label: 'Saved Jobs', icon: Heart },
+      { to: '/applications', label: 'My Applications', icon: FileText },
+      { to: '/profile', label: 'Profile Settings', icon: Settings },
+    ];
+
+    // Add content admin link for demo purposes (demo user has admin access)
+    if (user?.email === 'demo@jobsearchpro.com' || user?.email === 'john.doe@example.com') {
+      baseLinks.splice(-1, 0, { to: '/admin/content', label: 'Content Admin', icon: Edit });
+    }
+
+    return baseLinks;
+  };
+
+  const userMenuLinks = getUserMenuLinks();
 
   const isActive = (path: string) => location.pathname === path;
 

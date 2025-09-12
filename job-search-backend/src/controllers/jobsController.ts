@@ -26,16 +26,58 @@ export const getJobs = async (req: Request, res: Response): Promise<void> => {
     let queryParams: any[] = [];
     let paramCount = 0;
 
-    // Search filter
+    // Enhanced search filter with word variations
     if (search) {
       paramCount++;
-      whereConditions.push(`(
-        title ILIKE $${paramCount} OR 
-        company ILIKE $${paramCount} OR 
-        description ILIKE $${paramCount} OR 
-        location ILIKE $${paramCount}
-      )`);
-      queryParams.push(`%${search}%`);
+      const searchLower = search.toLowerCase();
+      
+      // Create variations for common job terms
+      let searchVariations = [searchLower];
+      
+      // Add common variations
+      const variations: Record<string, string[]> = {
+        'engineer': ['engineering', 'eng'],
+        'engineering': ['engineer', 'eng'],
+        'developer': ['development', 'dev'],
+        'development': ['developer', 'dev'], 
+        'manager': ['management', 'mgr'],
+        'management': ['manager', 'mgr'],
+        'analyst': ['analysis', 'analytics'],
+        'analysis': ['analyst', 'analytics'],
+        'designer': ['design', 'designing'],
+        'design': ['designer', 'designing'],
+        'frontend': ['front-end', 'front end'],
+        'backend': ['back-end', 'back end'],
+        'fullstack': ['full-stack', 'full stack'],
+      };
+      
+      // Add variations if search term matches
+      for (const [key, values] of Object.entries(variations)) {
+        if (searchLower.includes(key)) {
+          searchVariations.push(...values);
+        }
+      }
+      
+      // Build search conditions for each variation
+      const searchConditions = searchVariations.map((_, index) => {
+        const paramIndex = paramCount + index;
+        return `(
+          title ILIKE $${paramIndex} OR 
+          company ILIKE $${paramIndex} OR 
+          description ILIKE $${paramIndex} OR 
+          location ILIKE $${paramIndex} OR
+          department ILIKE $${paramIndex}
+        )`;
+      }).join(' OR ');
+      
+      whereConditions.push(`(${searchConditions})`);
+      
+      // Add parameters for each variation
+      searchVariations.forEach(variation => {
+        queryParams.push(`%${variation}%`);
+        paramCount++;
+      });
+      paramCount--; // Adjust for the loop increment
     }
 
     // Job type filter

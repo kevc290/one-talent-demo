@@ -119,7 +119,14 @@ const submitApplication = async (req: AuthenticatedRequest, res: Response): Prom
 
 // Validation rules
 const submitApplicationValidation = [
-  body('jobId').isUUID().withMessage('Invalid job ID'),
+  body('jobId')
+    .custom((value) => {
+      // Accept UUIDs or numeric IDs
+      const isUuid = typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+      const isNumeric = /^\d+$/.test(String(value));
+      return isUuid || isNumeric;
+    })
+    .withMessage('Invalid job ID'),
   body('coverLetter').isString().isLength({ min: 10, max: 2000 }).withMessage('Cover letter must be between 10 and 2000 characters'),
   body('resumeFilename').optional().isString().withMessage('Resume filename must be a string'),
 ];

@@ -193,13 +193,13 @@ export function About() {
               Find Jobs
               <ArrowRight className="w-5 h-5" />
             </Link>
-            <Link
+            {/* <Link
               to="/register"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-gray-900 font-semibold rounded-lg border-2 border-gray-300 hover:bg-gray-50 transition-colors"
             >
               Post a Job
               <Briefcase className="w-5 h-5" />
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>

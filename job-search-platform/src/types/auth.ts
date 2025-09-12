@@ -5,6 +5,7 @@ export interface User {
   lastName: string;
   avatar?: string;
   joinedDate: string;
+  createdAt?: string;
   profile?: UserProfile;
 }
 

@@ -1,0 +1,23 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "functions": {
+    "api/hubspot.js": {
+      "maxDuration": 10
+    }
+  },
+  "env": {
+    "VITE_USE_REAL_HUBSPOT": "@vite_use_real_hubspot",
+    "VITE_HUBSPOT_API_KEY": "@vite_hubspot_api_key",
+    "VITE_HUBSPOT_PORTAL_ID": "@vite_hubspot_portal_id", 
+    "VITE_HUBSPOT_API_BASE_URL": "@vite_hubspot_api_base_url",
+    "VITE_HUBSPOT_CUSTOM_OBJECT_TYPE": "@vite_hubspot_custom_object_type"
+  },
+  "rewrites": [
+    {
+      "source": "/api/hubspot/(.*)",
+      "destination": "/api/hubspot"
+    }
+  ]
+}

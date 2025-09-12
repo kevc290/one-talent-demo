@@ -25,12 +25,24 @@ app.use(helmet());
 
 // CORS configuration (must be before rate limiting to ensure CORS headers are always sent)
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-production-domain.com'] 
-    : ['http://localhost:5173', 'http://localhost:3000'],
+  origin: (origin, callback) => {
+    const devOrigins = ['http://localhost:5173', 'http://localhost:3000'];
+    const prodOrigins = ['https://kevc290.github.io'];
+    const allowed = process.env.NODE_ENV === 'production' ? prodOrigins : devOrigins.concat(prodOrigins);
+
+    // Allow non-browser requests (no origin) and allowed origins
+    if (!origin || allowed.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 200
 }));
+
+// Note: CORS middleware above will handle preflight OPTIONS automatically
 
 // Rate limiting (more lenient for development)
 const limiter = rateLimit({
