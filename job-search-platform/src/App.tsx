@@ -9,8 +9,10 @@ import { JobDetail } from './pages/JobDetail';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
+import { EnhancedDashboard } from './pages/EnhancedDashboard';
 import { SavedJobs } from './pages/SavedJobs';
 import { Admin } from './pages/Admin';
+import ContentAdmin from './pages/ContentAdmin';
 import { EditProfile } from './pages/EditProfile';
 import { About } from './pages/About';
 import { SearchWidget } from './pages/widgets/SearchWidget';
@@ -41,6 +43,11 @@ function App() {
             
             {/* Protected Routes */}
             <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <EnhancedDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/classic" element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
@@ -73,6 +80,11 @@ function App() {
             <Route path="/admin" element={
               <ProtectedRoute>
                 <Admin />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/content" element={
+              <ProtectedRoute>
+                <ContentAdmin />
               </ProtectedRoute>
             } />
             <Route path="/forgot-password" element={

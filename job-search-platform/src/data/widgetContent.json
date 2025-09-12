@@ -1,0 +1,96 @@
+{
+  "widgets": [
+    {
+      "id": "banner-1",
+      "type": "banner",
+      "title": "Welcome to Your Career Journey",
+      "content": "Discover exciting opportunities and take the next step in your career with Kelly Services.",
+      "htmlContent": "<div class=\"text-center\"><h2 class=\"text-2xl font-bold text-white mb-2\">Welcome to Your Career Journey</h2><p class=\"text-lg text-blue-100\">Discover exciting opportunities and take the next step in your career with Kelly Services.</p></div>",
+      "imageUrl": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&h=400&fit=crop",
+      "ctaText": "Explore Opportunities",
+      "ctaUrl": "/jobs",
+      "isActive": true,
+      "priority": 10,
+      "publishedDate": "2024-01-15T10:00:00Z",
+      "tags": ["career", "welcome", "banner"],
+      "lastUpdated": "2024-01-15T10:00:00Z",
+      "updatedBy": "Marketing Team"
+    },
+    {
+      "id": "promo-1",
+      "type": "card",
+      "title": "New Year, New Career",
+      "content": "Make 2024 your year of professional growth. Browse our latest job openings and find your perfect match.",
+      "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
+      "ctaText": "Browse Jobs",
+      "ctaUrl": "/jobs",
+      "isActive": true,
+      "priority": 8,
+      "publishedDate": "2024-01-01T00:00:00Z",
+      "tags": ["promotion", "jobs", "2024"],
+      "lastUpdated": "2024-01-01T00:00:00Z",
+      "updatedBy": "Marketing Team"
+    },
+    {
+      "id": "tips-1",
+      "type": "blog_post",
+      "title": "Interview Success Tips",
+      "content": "Master your next interview with these proven strategies from Kelly Services career experts.",
+      "htmlContent": "<article><h3 class=\"font-bold mb-2\">Interview Success Tips</h3><p>Master your next interview with these proven strategies from Kelly Services career experts.</p><ul class=\"list-disc ml-4 mt-2\"><li>Research the company thoroughly</li><li>Practice common interview questions</li><li>Prepare thoughtful questions to ask</li><li>Dress professionally and arrive early</li></ul></article>",
+      "author": "Kelly Career Team",
+      "isActive": true,
+      "priority": 7,
+      "publishedDate": "2024-01-10T14:30:00Z",
+      "tags": ["interview", "tips", "career-advice"],
+      "lastUpdated": "2024-01-10T14:30:00Z",
+      "updatedBy": "Kelly Career Team"
+    },
+    {
+      "id": "testimonial-1",
+      "type": "card", 
+      "title": "Success Story",
+      "content": "\"Kelly Services helped me find my dream job in just 3 weeks. The support was incredible!\" - Sarah M.",
+      "imageUrl": "https://images.unsplash.com/photo-1494790108755-2616b612b5bc?w=400&h=300&fit=crop",
+      "isActive": true,
+      "priority": 6,
+      "publishedDate": "2024-01-08T09:15:00Z",
+      "tags": ["testimonial", "success-story"],
+      "lastUpdated": "2024-01-08T09:15:00Z",
+      "updatedBy": "Marketing Team"
+    },
+    {
+      "id": "cta-1",
+      "type": "cta",
+      "title": "Ready to Get Started?",
+      "content": "Join thousands of professionals who have found their perfect job through Kelly Services.",
+      "ctaText": "Start Your Search",
+      "ctaUrl": "/jobs",
+      "isActive": true,
+      "priority": 5,
+      "publishedDate": "2024-01-05T16:45:00Z",
+      "tags": ["cta", "call-to-action"],
+      "lastUpdated": "2024-01-05T16:45:00Z",
+      "updatedBy": "Marketing Team"
+    },
+    {
+      "id": "industry-update-1",
+      "type": "blog_post",
+      "title": "Tech Industry Trends 2024",
+      "content": "Stay ahead of the curve with the latest trends shaping the technology sector this year.",
+      "htmlContent": "<article><h3 class=\"font-bold mb-2\">Tech Industry Trends 2024</h3><p>Stay ahead of the curve with the latest trends shaping the technology sector this year.</p><div class=\"mt-3\"><h4 class=\"font-semibold\">Key Trends:</h4><ul class=\"list-disc ml-4\"><li>AI and Machine Learning expansion</li><li>Remote work normalization</li><li>Cybersecurity focus</li><li>Green technology growth</li></ul></div></article>",
+      "author": "Tech Industry Analysts",
+      "isActive": true,
+      "priority": 4,
+      "publishedDate": "2024-01-12T11:20:00Z",
+      "tags": ["technology", "trends", "industry-update"],
+      "lastUpdated": "2024-01-12T11:20:00Z",
+      "updatedBy": "Content Team"
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "lastUpdated": "2024-01-15T10:00:00Z",
+    "description": "Widget content for Kelly Services dashboard - PoC version",
+    "note": "In production, this would be managed through your CMS/content management system"
+  }
+}
